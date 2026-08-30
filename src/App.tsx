@@ -1,5 +1,6 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
+import TaskItem from "./components/TaskItem";
 
 function App() {
   return (
@@ -27,13 +28,26 @@ function App() {
         </section>
 
         <ul className="task-list">
-          <li className="task-item">
-            <span className="task-text">
-              <span className="task-title">Finish JavaScript exercise</span>
-              <span className="task-user">Leanne Graham</span>
-            </span>
-            <span className="task-status pending">Pending</span>
-          </li>
+          <TaskItem
+            title="Finish JavaScript exercise"
+            ownerName="Leanne Graham"
+            statusText="Pending"
+            statusClass="pending"
+          />
+
+          <TaskItem
+            title="Review pull request"
+            ownerName="Leanne Graham"
+            statusText="Completed"
+            statusClass="completed"
+          />
+
+          <TaskItem
+            title="Write session notes"
+            ownerName="Clementine Bauch"
+            statusText="Pending"
+            statusClass="pending"
+          />
         </ul>
       </main>
     </div>
