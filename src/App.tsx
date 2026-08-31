@@ -4,36 +4,18 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 
 function App() {
-<<<<<<< HEAD
-  const [currentFilter, setCurrentFilter] = useState("all");
-  const [searchText, setSearchText] = useState("");
-=======
   // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
->>>>>>> origin/group-1
-
   function handleShowAll() {
     setCurrentFilter("all");
   }
 
-<<<<<<< HEAD
-  function handleShowPending() {
-    setCurrentFilter("pending");
-  }
-
-=======
->>>>>>> origin/group-1
   function handleShowCompleted() {
     setCurrentFilter("completed");
   }
 
-<<<<<<< HEAD
-  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
-    setSearchText(event.target.value);
-  }
-=======
   function handleShowPending() {
     setCurrentFilter("pending");
   }
@@ -46,7 +28,6 @@ function App() {
     setShowTasks(!showTasks);
   }
 
->>>>>>> origin/group-1
   return (
     <div>
       <Header />
@@ -86,18 +67,13 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
-<<<<<<< HEAD
-          {searchText !== "" ? <p> searching for : {searchText} </p> : null}
-=======
 
           {searchText !== "" ? (
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
->>>>>>> origin/group-1
         </section>
-
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
-          {showTasks ? "Hide Tasks" : "Show Tasks"}
+          {showTasks ? "Hide" : "Show"} Tasks
         </button>
 
         {showTasks ? (
