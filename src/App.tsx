@@ -1,9 +1,27 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
-import FilterButton from "./components/FilterButton";
+import { ChangeEvent, useState } from "react";
 
-function App() {
+export default function App() {
+  // let currentFilter = "all";
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const [searchText, setSearchText] = useState("");
+
+  function handleSearchText(event: ChangeEvent<HTMLInputElement>) {
+    setSearchText(event.target.value);
+  }
+
+  function handleShowAll() {
+    setCurrentFilter("all");
+  }
+  function handleShowCompleted() {
+    setCurrentFilter("completed");
+  }
+  function handleShowPending() {
+    setCurrentFilter("pending");
+  }
+
   return (
     <div>
       <Header />
@@ -16,9 +34,24 @@ function App() {
         </section>
 
         <section className="filters">
-          <FilterButton status="active" label="All" />
-          <FilterButton status="" label="Completed" />
-          <FilterButton status="" label="Pending" />
+          <button
+            className={`filter-button ${currentFilter === "all" ? "active" : ""}`}
+            onClick={handleShowAll}
+          >
+            All
+          </button>
+          <button
+            className={`filter-button ${currentFilter === "completed" ? "active" : ""}`}
+            onClick={handleShowCompleted}
+          >
+            Completed
+          </button>
+          <button
+            className={`filter-button ${currentFilter === "pending" ? "active" : ""}`}
+            onClick={handleShowPending}
+          >
+            Pending
+          </button>
         </section>
 
         <section className="search">
@@ -26,6 +59,8 @@ function App() {
             type="text"
             className="search-input"
             placeholder="Search tasks..."
+            value={searchText}
+            onChange={handleSearchText}
           />
         </section>
 
@@ -55,5 +90,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
