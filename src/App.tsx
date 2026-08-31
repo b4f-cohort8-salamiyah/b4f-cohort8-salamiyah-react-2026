@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
             placeholder="Search tasks..."
           />
         </section>
+
+        <SectionTitle title="Your Tasks" />
 
         <ul className="task-list">
           <TaskItem
