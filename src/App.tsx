@@ -34,6 +34,16 @@ function App() {
     setName(event.target.value);
   }
 
+  let greetingMessage = "";
+
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
+
   return (
     <div>
       <Header />
@@ -89,13 +99,13 @@ function App() {
             onChange={handleNameChange}
           />
 
-          {name !== "" ? <p className="greeting">Hello, {name}</p> : null}
+          {name !== "" ? <p className="greeting">{greetingMessage}</p> : null}
         </section>
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
-        <SectionTitle title="Task List" />
+        <SectionTitle title="Task List" subtitle="Keep track of your tasks" />
 
         {showTasks ? (
           <ul className="task-list">

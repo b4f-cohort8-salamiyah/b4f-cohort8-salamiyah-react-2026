@@ -178,6 +178,24 @@ body {
   border-radius: 999px;
   content: "";
 }
+
+.section-heading {
+  margin: 2rem 0 1rem;
+}
+
+.section-title {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  margin: 0.4rem 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
 /* ---------- Name Section ---------- */
 .name-section {
   margin: 1.5rem 0;
@@ -196,7 +214,7 @@ body {
 
 .name-input {
   width: 100%;
-  max-width:  twentyrem;
+  max-width: twentyrem;
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   color: #1f2937;
@@ -217,7 +235,6 @@ body {
   color: #166534;
   font-weight: 600;
 }
-
 
 /* ---------- Small screens ---------- */
 
