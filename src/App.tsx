@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle"; 
 
 function App() {
   // const currentFilter = "all";
@@ -77,6 +78,8 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+
+        <SectionTitle title="Task List" />
 
         {showTasks ? (
           <ul className="task-list">
