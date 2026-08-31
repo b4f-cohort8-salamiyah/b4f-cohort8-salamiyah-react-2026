@@ -6,7 +6,8 @@ import TaskItem from "./components/TaskItem";
 function App() {
   // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
-  const [searchText, setSearchText] = useState("kjasdbfkbads");
+  const [searchText, setSearchText] = useState("");
+  const [showTasks, setShowTasks] = useState(true);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -22,6 +23,10 @@ function App() {
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
+  }
+
+  function handleShowTasks() {
+    setShowTasks(!showTasks);
   }
 
   return (
@@ -69,28 +74,34 @@ function App() {
           ) : null}
         </section>
 
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
+        <button className="toggle-tasks-button" onClick={handleShowTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
 
-          <TaskItem
-            title="Review pull request"
-            ownerName="Leanne Graham"
-            statusText="Completed"
-            statusClass="completed"
-          />
+        {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
 
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>
+            <TaskItem
+              title="Review pull request"
+              ownerName="Leanne Graham"
+              statusText="Completed"
+              statusClass="completed"
+            />
+
+            <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
+        ) : null}
       </main>
     </div>
   );
