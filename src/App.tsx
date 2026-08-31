@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
@@ -10,7 +11,13 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
   const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(true);
 
+
+  function handelShowGreeting ():void{
+    setShowGreeting(!showGreeting);
+
+  }
   function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
   }
@@ -33,7 +40,15 @@ function App() {
   function handleToggleTasks() {
     setShowTasks(!showTasks);
   }
+let greetingMessage = "";
 
+    if (name === "") {
+      greetingMessage = "";
+    } else if (name === "admin") {
+      greetingMessage = "Welcome back, admin."; // إذا كتب المستخدم admin بالضبط
+    } else {
+      greetingMessage = "Hello, " + name + "!"; // لأي اسم آخر
+    }
   return (
     <div>
       <Header />
@@ -79,10 +94,24 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
+        <section className="person-summaries">
+          <PersonSummary name="Leanne Graham" taskCount={1} />
+          <PersonSummary name="Ervin Howell" taskCount={1} />
+          <PersonSummary name="Clementine Bauch" taskCount={1} />
+        </section>
+
 
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+
+
+        <button className="toggle-greeting-button" onClick={handelShowGreeting}>
+          {showGreeting ? "Hide Greeting Section" : "Show Greeting Section"}
+        </button>
+
+        
+        {showGreeting? 
         <div className="name-input-section">
           <input 
             className="name-input"
@@ -92,14 +121,16 @@ function App() {
               onChange={handleNameChange} 
              
           />
-          {name !== "" ? <p>Hello, {name}!</p> : null}
+          {name !== "" ? <p>{greetingMessage}</p> : null}
+
 
         </div>
+        :null}
           
 
         {showTasks ? (
           <div>
-         <SectionTitle   title="Your Tasks"/>
+         <SectionTitle   title="Your Tasks" subtitle="Thats is our tasks"/>
           <ul className="task-list">
             <TaskItem
               title="Finish JavaScript exercise"

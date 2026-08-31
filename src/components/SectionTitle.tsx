@@ -1,9 +1,12 @@
 interface sectionTitleProps {
   title: string;
+  subtitle: string;
 }
-function sectionTitle(props:sectionTitleProps){
+function SectionTitle(props:sectionTitleProps){
     return(
-        <h1 className="sectionTitle">{props.title}</h1>
+        <div><h1 className="sectionTitle">{props.title}</h1>
+        <p>{props.subtitle}</p></div>
+        
     );
 }
-export default sectionTitle;
+export default SectionTitle;
