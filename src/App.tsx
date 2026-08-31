@@ -2,12 +2,16 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import NameGreeting from "./components/NameGreeting";
 
 function App() {
   // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [nameGreetingText, setNameGreetingText] = useState("");
+
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -26,6 +30,10 @@ function App() {
 
   function handleShowTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleNameGreetingChange(event: ChangeEvent<HTMLInputElement>) {
+    setNameGreetingText(event.target.value);
   }
 
   return (
@@ -75,7 +83,18 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide" : "Show"} Tasks
         </button>
-
+        <section className="name-greeting">
+          <input
+            type="text"
+            className="name-greeting-input"
+            placeholder="Enter Your Name..."
+            value={nameGreetingText}
+            onChange={handleNameGreetingChange}
+          />
+          {nameGreetingText !== "" ?  <NameGreeting name={nameGreetingText} /> : null}
+          
+        </section>
+        <SectionTitle title="Your Tasks" subTitle="This is the subtitle of your task"/>
         {showTasks ? (
           <ul className="task-list">
             <TaskItem

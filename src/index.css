@@ -200,3 +200,60 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+
+.name-greeting {
+  margin-top: 15px;
+}
+
+
+/* ---------- Name Greeting ---------- */
+
+.name-greeting-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.name-greeting-input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+
+.name-greeting-feedback {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+
+
+/* ---------- Section title ---------- */
+
+
+
+.section-title-card {
+  
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 15px 18px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.section-title-title {
+  
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-subtitle-title {
+  color: #6b7280;
+  font-size: 12px;
+}
+
