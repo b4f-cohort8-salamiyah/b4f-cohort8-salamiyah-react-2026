@@ -202,3 +202,45 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+.section-title {
+  display: flex;
+  justify-content: center;
+  color: #4f5560;
+}
+.name {
+  margin: 1.5rem 0;
+  font-family: sans-serif;
+}
+.name label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #666;
+}
+.name input {
+  padding: 8px 12px;
+  border: 1px solid #e7e5e5;
+  border-radius: 4px;
+  width: 250px;
+}
+.name input:focus {
+  border-color: #007bff;
+}
+name p {
+  margin-top: 10px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+.toggle-greeting-button {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 18px;
+  margin-top: 15px;
+}
+.toggle-greeting-button:hover {
+  border-color: #3b6ef5;
+}
