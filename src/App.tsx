@@ -2,13 +2,18 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
 
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
   function handleShowAll(): void {
     setCurrentFilter("all");
   }
@@ -78,8 +83,23 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+        <div className="name-input-section">
+          <input 
+            className="name-input"
+              type="text" 
+              placeholder="Enter your name" 
+              value={name} 
+              onChange={handleNameChange} 
+             
+          />
+          {name !== "" ? <p>Hello, {name}!</p> : null}
+
+        </div>
+          
 
         {showTasks ? (
+          <div>
+         <SectionTitle   title="Your Tasks"/>
           <ul className="task-list">
             <TaskItem
               title="Finish JavaScript exercise"
@@ -102,6 +122,7 @@ function App() {
               statusClass="pending"
             />
           </ul>
+          </div>
         ) : null}
       </main>
     </div>
