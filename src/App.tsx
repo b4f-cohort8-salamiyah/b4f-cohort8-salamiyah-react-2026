@@ -10,12 +10,15 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
   const [name, setName] = useState("");
+
   function handleShowAll(): void {
     setCurrentFilter("all");
   }
+
   function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
   }
+
   function handleShowCompleted() {
     setCurrentFilter("completed");
   }
@@ -30,6 +33,16 @@ function App() {
 
   function handleToggleTasks() {
     setShowTasks(!showTasks);
+  }
+
+  let greetingMessage = "";
+
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
   }
 
   return (
@@ -49,7 +62,7 @@ function App() {
             onChange={handleNameChange}
             placeholder="Enter Your name"
           />
-          {name ? <p>Hello, {name}!</p> : null}
+          {name ? <p>{greetingMessage}</p> : null}
         </div>
         <section className="filters">
           <button
@@ -87,7 +100,7 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-        <SectionTitle title={"User's Tasks"}></SectionTitle>
+        <SectionTitle title={"User's Tasks"} subtitle="Here Are your tasks"></SectionTitle>
         {showTasks ? (
           <ul className="task-list">
             <TaskItem

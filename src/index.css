@@ -203,6 +203,28 @@ body {
   border-color: #3b6ef5;
 }
 
+/* ---------- Section Title ---------- */
+
+.section-title {
+  margin-top: 25px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.section-title h2 {
+  color: #1f2430;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.section-title p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
 /* ---------- Greeting ---------- */
 
 .name-greeting {
