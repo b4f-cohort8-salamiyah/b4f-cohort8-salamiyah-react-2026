@@ -2,13 +2,14 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 
 function App() {
   // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
+  const [nameText, setNameText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
-
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -24,7 +25,17 @@ function App() {
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
   }
-
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setNameText(event.target.value);
+  }
+        let greetingMessage = "";
+  if (nameText === "") {
+    greetingMessage = "";
+  } else if (nameText === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + nameText + "!";
+  }
   function handleShowTasks() {
     setShowTasks(!showTasks);
   }
@@ -73,10 +84,24 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
+        <section className="name">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Enter your name..."
+            value={nameText}
+            onChange={handleNameChange}
+          />
+
+          {nameText !== "" ? (
+            <p className="search-feedback">hello: {greetingMessage}</p>
+          ) : null}
+        </section>
 
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+        <SectionTitle title="Your Tasks" subtitle="Your current tasks" />
 
         {showTasks ? (
           <ul className="task-list">
