@@ -164,11 +164,7 @@ one you want, so it shows you both and asks you to decide. This is normal — it
 A conflicted file looks like this:
 
 ```
-<<<<<<< HEAD
-your current code
-=======
 code coming from the group branch
->>>>>>> origin/group-1
 ```
 
 - **`HEAD`** — your current code, on your personal branch.
