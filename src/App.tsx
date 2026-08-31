@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import FilterButton from "./components/FilterButton";
 
 function App() {
   return (
@@ -15,9 +16,9 @@ function App() {
         </section>
 
         <section className="filters">
-          <button className="filter-button active">All</button>
-          <button className="filter-button">Completed</button>
-          <button className="filter-button">Pending</button>
+          <FilterButton status="active" label="All" />
+          <FilterButton status="" label="Completed" />
+          <FilterButton status="" label="Pending" />
         </section>
 
         <section className="search">
