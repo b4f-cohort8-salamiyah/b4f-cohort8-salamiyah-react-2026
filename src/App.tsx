@@ -1,13 +1,27 @@
-import { ChangeEvent, useState } from "react";
+import {ChangeEvent, useState} from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PrePeopleTask from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
+  const [showGreetingMessage, setShowGreetingMessage] = useState(true);
+
+  let greetingMessage = "";
+
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -25,8 +39,16 @@ function App() {
     setSearchText(event.target.value);
   }
 
+  function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
   function handleToggleTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handelToggleGreeting() {
+    setShowGreetingMessage(!showGreetingMessage);
   }
 
   return (
@@ -38,6 +60,12 @@ function App() {
           <StatCard label="Total Tasks" value={3} />
           <StatCard label="Completed" value={1} />
           <StatCard label="Pending" value={2} />
+        </section>
+
+        <section className="people">
+          <PrePeopleTask name="Leanne Graham" taskCount={1} />
+          <PrePeopleTask name="Ervin Howell" taskCount={1} />
+          <PrePeopleTask name="Clementine Bauch" taskCount={1} />
         </section>
 
         <section className="filters">
@@ -61,6 +89,21 @@ function App() {
           </button>
         </section>
 
+        <section className="user-name">
+          <input
+            className="user-name-input"
+            type="text"
+            placeholder="Enter your name..."
+            value={name}
+            onChange={handleNameChange}
+          />
+
+          {showGreetingMessage ? <p>{greetingMessage}</p> : null}
+        </section>
+        <button className="greetBtn" onClick={handelToggleGreeting}>
+          {showGreetingMessage ? "hide greet" : "show greet"}
+        </button>
+
         <section className="search">
           <input
             type="text"
@@ -78,6 +121,11 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+
+        <SectionTitle
+          title="Your tasks:"
+          subtitle=" Lorem ipsum dolor sit amet."
+        />
 
         {showTasks ? (
           <ul className="task-list">
