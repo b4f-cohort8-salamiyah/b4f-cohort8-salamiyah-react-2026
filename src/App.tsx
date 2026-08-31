@@ -7,6 +7,11 @@ export default function App() {
   // let currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [showTasks, setShowedTasks] = useState(true);
+
+  function handleShowedTasks() {
+    setShowedTasks(!showTasks);
+  }
 
   function handleSearchText(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
@@ -64,28 +69,34 @@ export default function App() {
           />
         </section>
 
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
+        <button className="toggle-tasks-button" onClick={handleShowedTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
 
-          <TaskItem
-            title="Review pull request"
-            ownerName="Ervin Howell"
-            statusText="Completed"
-            statusClass="completed"
-          />
+        {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
 
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>
+            <TaskItem
+              title="Review pull request"
+              ownerName="Ervin Howell"
+              statusText="Completed"
+              statusClass="completed"
+            />
+
+            <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
+        ) : null}
       </main>
     </div>
   );
