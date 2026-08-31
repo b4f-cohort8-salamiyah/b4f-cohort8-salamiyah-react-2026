@@ -1,8 +1,32 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import { ChangeEvent, useState } from "react";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
+  const [name, setName] = useState("");
+
+  const [showGreeting, setShowGreeting] = useState(true);
+
+  function handelNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
+
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
+
   return (
     <div>
       <Header />
@@ -27,6 +51,8 @@ function App() {
           />
         </section>
 
+        <SectionTitle title="Your Tasks" subtitle="Manage your daily to-dos" />
+
         <ul className="task-list">
           <TaskItem
             title="Finish JavaScript exercise"
@@ -49,6 +75,21 @@ function App() {
             statusClass="pending"
           />
         </ul>
+
+        <PersonSummary name="molham" taskCount={0} />
+        <PersonSummary name="nawar" taskCount={100} />
+
+        <button onClick={handleToggleGreeting}>
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
+        </button>
+
+        <input
+          type="text"
+          value={name}
+          onChange={handelNameChange}
+          placeholder="Enter your name"
+        />
+        {name !== "" ? <p>{greetingMessage}</p> : null}
       </main>
     </div>
   );
