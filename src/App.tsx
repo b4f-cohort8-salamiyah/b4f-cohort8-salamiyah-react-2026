@@ -3,6 +3,9 @@ import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle"; 
+import PersonSummary from "./components/PersonSummary";
+
+
 
 function App() {
   // const currentFilter = "all";
@@ -10,6 +13,9 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
   const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(true);
+
+
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -33,6 +39,11 @@ function App() {
   function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
   }
+
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
+
 
   let greetingMessage = "";
 
@@ -88,19 +99,33 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
-        <section className="name-section">
-          <label htmlFor="name-input">Your name</label>
-          <input
-            id="name-input"
-            type="text"
-            className="name-input"
-            placeholder="Enter your name..."
-            value={name}
-            onChange={handleNameChange}
-          />
+        <PersonSummary name="Ali Alhamwi" taskCount={3} />
+        <PersonSummary name="Majed Hmoud" taskCount={2} />
+        <PersonSummary name="Adham Albasha" taskCount={1} />
 
-          {name !== "" ? <p className="greeting">{greetingMessage}</p> : null}
-        </section>
+        <button
+          className="toggle-greeting-button"
+          onClick={handleToggleGreeting}
+        >
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
+        </button>
+        {showGreeting ? (
+          <section className="name-section">
+            <label htmlFor="name-input">Your name</label>
+
+            <input
+              id="name-input"
+              type="text"
+              className="name-input"
+              placeholder="Enter your name..."
+              value={name}
+              onChange={handleNameChange}
+            />
+
+            {name !== "" ? <p className="greeting">{greetingMessage}</p> : null}
+          </section>
+        ) : null}
+
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
