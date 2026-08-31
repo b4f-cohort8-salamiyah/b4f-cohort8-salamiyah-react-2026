@@ -202,3 +202,33 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+
+/* ---------- Greeting ---------- */
+
+.name-greeting {
+  margin-top: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.name-greeting input {
+  width: 100%;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+}
+
+.name-greeting input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+
+.name-greeting p {
+  color: #1f2430;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 12px;
+}

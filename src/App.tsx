@@ -2,17 +2,20 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
-
+  const [name, setName] = useState("");
   function handleShowAll(): void {
     setCurrentFilter("all");
   }
-
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
   function handleShowCompleted() {
     setCurrentFilter("completed");
   }
@@ -39,7 +42,15 @@ function App() {
           <StatCard label="Completed" value={1} />
           <StatCard label="Pending" value={2} />
         </section>
-
+        <div className="name-greeting">
+          <input
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Enter Your name"
+          />
+          {name ? <p>Hello, {name}!</p> : null}
+        </div>
         <section className="filters">
           <button
             className={`filter-button ${currentFilter === "all" ? "active" : ""}`}
@@ -60,7 +71,6 @@ function App() {
             Pending
           </button>
         </section>
-
         <section className="search">
           <input
             type="text"
@@ -74,11 +84,10 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
-
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-
+        <SectionTitle title={"User's Tasks"}></SectionTitle>
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
