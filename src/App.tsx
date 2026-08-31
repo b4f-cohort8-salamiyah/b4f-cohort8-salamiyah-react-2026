@@ -7,6 +7,7 @@ function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [showTasks, setShowTasks] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -22,6 +23,10 @@ function App() {
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
+  }
+
+  function handleToggleTasks() {
+    setShowTasks(!showTasks);
   }
 
   return (
@@ -64,34 +69,40 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
+
+          {searchText ? (
+            <p className="search-feedback">Searching for: {searchText}</p>
+          ) : null}
         </section>
 
-        {searchText ? (
-          <p className="search-feedback">Searching for: {searchText}</p>
+        <button className="toggle-tasks-button" onClick={handleToggleTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
+
+        {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
+
+            <TaskItem
+              title="Review pull request"
+              ownerName="Ervin Howell"
+              statusText="Completed"
+              statusClass="completed"
+            />
+
+            <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
         ) : null}
-
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
-
-          <TaskItem
-            title="Review pull request"
-            ownerName="Ervin Howell"
-            statusText="Completed"
-            statusClass="completed"
-          />
-
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>
       </main>
     </div>
   );
