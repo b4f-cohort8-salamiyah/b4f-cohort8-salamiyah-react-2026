@@ -3,12 +3,14 @@ import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [showGreeting, setShowGreeting] = useState(true);
 
   // part b
   const [name, setName] = useState("");
@@ -38,22 +40,41 @@ function App() {
     setName(event.target.value);
   }
 
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
+
+  let greetingMessage = "";
+
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name.toLowerCase() === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "! ";
+  }
+
   return (
     <div>
       <Header />
 
       <main className="container">
-        <section className="greeting">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Enter your name..."
-            value={name}
-            onChange={handleNameChange}
-          />
+        {showGreeting ? (
+          <section className="greeting">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Enter your name..."
+              value={name}
+              onChange={handleNameChange}
+            />
 
-          {name ? <p className="search-feedback">Hello, {name}!</p> : null}
-        </section>
+            {name ? <p className="search-feedback">{greetingMessage}</p> : null}
+          </section>
+        ) : null}
+        <button className="toggle-tasks-button" onClick={handleToggleGreeting}>
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
+        </button>
 
         <section className="stats">
           <StatCard label="Total Tasks" value={3} />
@@ -82,6 +103,13 @@ function App() {
           </button>
         </section>
 
+        <section className="person-summary-card">
+          <p className="summary-title">Task Per Person :</p>
+          <PersonSummary name="Leanne Graham" taskCount={1} />
+          <PersonSummary name="Ervin Howell " taskCount={2} />
+          <PersonSummary name="Clementine Bauch" taskCount={3} />
+        </section>
+
         <section className="search">
           <input
             type="text"
@@ -100,7 +128,7 @@ function App() {
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
-        <SectionTitle title="Your Tasks:" />
+        <SectionTitle title="Your Tasks:" subtitle="is Who Knows...?" />
 
         {showTasks ? (
           <ul className="task-list">
