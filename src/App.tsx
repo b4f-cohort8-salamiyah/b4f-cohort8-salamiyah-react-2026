@@ -2,12 +2,16 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -25,8 +29,26 @@ function App() {
     setSearchText(event.target.value);
   }
 
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
   function handleToggleTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
+
+  let greetingMessage = "";
+
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
   }
 
   return (
@@ -38,6 +60,12 @@ function App() {
           <StatCard label="Total Tasks" value={3} />
           <StatCard label="Completed" value={1} />
           <StatCard label="Pending" value={2} />
+        </section>
+
+        <section className="people-summary">
+          <PersonSummary name="Leanne Graham" taskCount={1} />
+          <PersonSummary name="Ervin Howell" taskCount={1} />
+          <PersonSummary name="Clementine Bauch" taskCount={1} />
         </section>
 
         <section className="filters">
@@ -79,29 +107,66 @@ function App() {
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
+        <button
+          className="toggle-greeting-button"
+          onClick={handleToggleGreeting}
+        >
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
+        </button>
+
+        <section>
+          <input
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={handleNameChange}
+          />
+          {name ? <p>{greetingMessage}</p> : null}
+        </section>
+
+        {showGreeting ? (
+          <section className="greeting-section">
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={handleNameChange}
+            />
+
+            {name ? <p>{greetingMessage}</p> : null}
+          </section>
+        ) : null}
+
         {showTasks ? (
-          <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
+          <section>
+            <SectionTitle
+              title="Your Tasks"
+              subtitle="Manage your tasks and keep track of your progress"
             />
 
-            <TaskItem
-              title="Review pull request"
-              ownerName="Ervin Howell"
-              statusText="Completed"
-              statusClass="completed"
-            />
+            <ul className="task-list">
+              <TaskItem
+                title="Finish JavaScript exercise"
+                ownerName="Leanne Graham"
+                statusText="Pending"
+                statusClass="pending"
+              />
 
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
-          </ul>
+              <TaskItem
+                title="Review pull request"
+                ownerName="Ervin Howell"
+                statusText="Completed"
+                statusClass="completed"
+              />
+
+              <TaskItem
+                title="Write session notes"
+                ownerName="Clementine Bauch"
+                statusText="Pending"
+                statusClass="pending"
+              />
+            </ul>
+          </section>
         ) : null}
       </main>
     </div>
