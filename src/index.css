@@ -202,3 +202,12 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+
+.section-title {
+  margin-left: 15px;
+  margin-top: 15px;
+}
+
+.search-input {
+  margin-bottom: 15px;
+}

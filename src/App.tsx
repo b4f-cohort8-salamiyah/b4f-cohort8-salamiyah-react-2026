@@ -2,12 +2,17 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+
+  // part b
+  const [name, setName] = useState("");
+  //--
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -29,11 +34,27 @@ function App() {
     setShowTasks(!showTasks);
   }
 
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
   return (
     <div>
       <Header />
 
       <main className="container">
+        <section className="greeting">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Enter your name..."
+            value={name}
+            onChange={handleNameChange}
+          />
+
+          {name ? <p className="search-feedback">Hello, {name}!</p> : null}
+        </section>
+
         <section className="stats">
           <StatCard label="Total Tasks" value={3} />
           <StatCard label="Completed" value={1} />
@@ -78,6 +99,8 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+
+        <SectionTitle title="Your Tasks:" />
 
         {showTasks ? (
           <ul className="task-list">
