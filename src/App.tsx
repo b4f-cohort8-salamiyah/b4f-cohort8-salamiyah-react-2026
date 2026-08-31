@@ -2,13 +2,29 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from './components/SectionTitle';
+import PersonSummary from "./components/PersonSummary";
+
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState('');
+  const [showGreeting, setShowGreeting] = useState(true);
 
+  let greetingMessage = '';
+if (name === '') {
+  greetingMessage = ''; 
+} else if (name === 'admin') {
+  greetingMessage = 'Welcome back, admin.';
+} else {
+  greetingMessage = 'Hello, ' + name + '!'; 
+}
+function handleToggleGreeting() {
+  setShowGreeting(!showGreeting);
+}
   function handleShowAll(): void {
     setCurrentFilter("all");
   }
@@ -28,6 +44,9 @@ function App() {
   function handleToggleTasks() {
     setShowTasks(!showTasks);
   }
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+  setName(event.target.value);
+}
 
   return (
     <div>
@@ -60,6 +79,7 @@ function App() {
             Pending
           </button>
         </section>
+        
 
         <section className="search">
           <input
@@ -74,11 +94,42 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
+        <button onClick={handleToggleGreeting} 
+  style={{
+    backgroundColor: "#ffffff",
+    border: "1px solid #e2e5ea",
+    borderRadius: "8px",
+    color: "#1f2430",
+    cursor: "pointer",
+    fontSize: "15px",
+    padding: "10px 18px",
+    marginTop:"10px"
+  }}
+>
+          {showGreeting ? 'Hide Greeting' : 'Show Greeting'}
+          </button>
+        {showGreeting ? (
+        <div >
+    <h3>Name Greeting</h3>
+    <input 
+      type="text" 
+      placeholder="Enter your name..." 
+      value={name} 
+      onChange={handleNameChange} 
+      style={{padding:"10px"}}
+    />
+    {name !== '' ? <p  style={{padding:"10px", color:"#3b6ef5"}}>{greetingMessage}</p> : null}
+  </div>
+) : null}
+        <div style={{marginTop:"10px"}}>
+          <PersonSummary  name="Tayma" taskCount={8} />
+        <PersonSummary name="nour" taskCount={5} />
+        <PersonSummary name="ali" taskCount={1} /></div>
 
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-
+         <SectionTitle title="Your Tasks" subtitle="Manage your to-dos" />
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
