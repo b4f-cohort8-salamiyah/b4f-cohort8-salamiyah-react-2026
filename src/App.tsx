@@ -4,24 +4,49 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 
 function App() {
+<<<<<<< HEAD
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+=======
+  // const currentFilter = "all";
+  const [currentFilter, setCurrentFilter] = useState("pending");
+  const [searchText, setSearchText] = useState("");
+  const [showTasks, setShowTasks] = useState(true);
+>>>>>>> origin/group-1
 
   function handleShowAll() {
     setCurrentFilter("all");
   }
 
+<<<<<<< HEAD
   function handleShowPending() {
     setCurrentFilter("pending");
   }
 
+=======
+>>>>>>> origin/group-1
   function handleShowCompleted() {
     setCurrentFilter("completed");
+  }
+
+<<<<<<< HEAD
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearchText(event.target.value);
+  }
+=======
+  function handleShowPending() {
+    setCurrentFilter("pending");
   }
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
   }
+
+  function handleShowTasks() {
+    setShowTasks(!showTasks);
+  }
+
+>>>>>>> origin/group-1
   return (
     <div>
       <Header />
@@ -61,31 +86,44 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
+<<<<<<< HEAD
           {searchText !== "" ? <p> searching for : {searchText} </p> : null}
+=======
+
+          {searchText !== "" ? (
+            <p className="search-feedback">Searching for: {searchText}</p>
+          ) : null}
+>>>>>>> origin/group-1
         </section>
 
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
+        <button className="toggle-tasks-button" onClick={handleShowTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
 
-          <TaskItem
-            title="Review pull request"
-            ownerName="Leanne Graham"
-            statusText="Completed"
-            statusClass="completed"
-          />
+        {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
 
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>
+            <TaskItem
+              title="Review pull request"
+              ownerName="Leanne Graham"
+              statusText="Completed"
+              statusClass="completed"
+            />
+
+            <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
+        ) : null}
       </main>
     </div>
   );
