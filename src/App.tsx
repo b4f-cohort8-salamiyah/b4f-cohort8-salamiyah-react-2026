@@ -2,12 +2,13 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
-
+import SectionTitle from "./components/SectionTitle";
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -27,6 +28,19 @@ function App() {
 
   function handleToggleTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "yamar") {
+    greetingMessage = "Welcome back, yamar.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
   }
 
   return (
@@ -74,11 +88,20 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
-
+        <section className="name">
+          <input
+            type="text"
+            className="name-input"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Enter your name"
+          />
+          {name ? <p>{greetingMessage}</p> : null}
+        </section>
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-
+        <SectionTitle title="My tasks" subtitle="All tasks" />
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
