@@ -114,16 +114,6 @@ function App() {
           {showGreeting ? "Hide Greeting" : "Show Greeting"}
         </button>
 
-        <section>
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={handleNameChange}
-          />
-          {name ? <p>{greetingMessage}</p> : null}
-        </section>
-
         {showGreeting ? (
           <section className="greeting-section">
             <input
