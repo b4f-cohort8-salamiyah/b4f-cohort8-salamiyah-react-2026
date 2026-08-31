@@ -107,6 +107,22 @@ body {
   width: 100%;
 }
 
+.name-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.person-data {
+  display: flex;
+
+  gap: 5px;
+  padding: 9px;
+  margin: 8px;
+}
 .search-input:focus {
   border-color: #3b6ef5;
   outline: none;

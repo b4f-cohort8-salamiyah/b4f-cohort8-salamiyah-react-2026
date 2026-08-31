@@ -2,13 +2,25 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
+  const [showGreetingMessage, setShowGreetingMessage] = useState(true);
 
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -25,8 +37,15 @@ function App() {
     setSearchText(event.target.value);
   }
 
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
   function handleShowTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleShowgreetingMessage() {
+    setShowGreetingMessage(!showGreetingMessage);
   }
 
   return (
@@ -74,10 +93,38 @@ function App() {
           ) : null}
         </section>
 
+        {showGreetingMessage ? (
+          <div className="namegreeting">
+            <input
+              type="text"
+              className="name-input"
+              placeholder="please Enter Your Name..."
+              value={name}
+              onChange={handleNameChange}
+            />
+
+            {name !== "" ? <p>{greetingMessage}</p> : null}
+          </div>
+        ) : null}
+        <button
+          className="toggle-tasks-button"
+          onClick={handleShowgreetingMessage}
+        >
+          {showGreetingMessage ? "Hide Greeting" : "Show Greeting"}
+        </button>
+
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
+        <PersonSummary name="Ghazal Daoun" taskCount={10} />
+        <PersonSummary name="Shiam Azzo" taskCount={16} />
+        <PersonSummary name="Asmaa Dayoub" taskCount={30} />
+
+        <SectionTitle
+          title="Critical Tasks"
+          subtitle="Critical Tasks for first production"
+        />
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
