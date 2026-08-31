@@ -9,7 +9,7 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
-
+  const [name, setName] = useState("");
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -28,6 +28,10 @@ function App() {
 
   function handleShowTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
   }
 
   return (
@@ -74,7 +78,19 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
+        <section className="name-section">
+          <label htmlFor="name-input">Your name</label>
+          <input
+            id="name-input"
+            type="text"
+            className="name-input"
+            placeholder="Enter your name..."
+            value={name}
+            onChange={handleNameChange}
+          />
 
+          {name !== "" ? <p className="greeting">Hello, {name}</p> : null}
+        </section>
         <button className="toggle-tasks-button" onClick={handleShowTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
