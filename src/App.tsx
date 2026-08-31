@@ -1,8 +1,27 @@
+import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 
 function App() {
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const [searchText, setSearchText] = useState("");
+
+  function handleShowAll() {
+    setCurrentFilter("all");
+  }
+
+  function handleShowPending() {
+    setCurrentFilter("pending");
+  }
+
+  function handleShowCompleted() {
+    setCurrentFilter("completed");
+  }
+
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearchText(event.target.value);
+  }
   return (
     <div>
       <Header />
@@ -14,9 +33,24 @@ function App() {
         </section>
 
         <section className="filters">
-          <button className="filter-button active">All</button>
-          <button className="filter-button">Completed</button>
-          <button className="filter-button">Pending</button>
+          <button
+            className={`filter-button ${currentFilter === "all" ? "active" : ""}`}
+            onClick={handleShowAll}
+          >
+            All
+          </button>
+          <button
+            className={`filter-button ${currentFilter === "completed" ? "active" : ""}`}
+            onClick={handleShowCompleted}
+          >
+            Completed
+          </button>
+          <button
+            className={`filter-button ${currentFilter === "pending" ? "active" : ""}`}
+            onClick={handleShowPending}
+          >
+            Pending
+          </button>
         </section>
 
         <section className="search">
@@ -24,7 +58,10 @@ function App() {
             type="text"
             className="search-input"
             placeholder="Search tasks..."
+            value={searchText}
+            onChange={handleSearchChange}
           />
+          {searchText !== "" ? <p> searching for : {searchText} </p> : null}
         </section>
 
         <ul className="task-list">
