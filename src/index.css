@@ -174,3 +174,14 @@ body {
     flex-wrap: wrap;
   }
 }
+
+.search-input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+
+.search-feedback {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 8px;
+}
