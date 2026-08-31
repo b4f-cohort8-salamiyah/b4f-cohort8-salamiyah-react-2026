@@ -6,7 +6,7 @@ interface PersonSummaryProps {
 
 function PersonSummary(props: PersonSummaryProps) {
   return (
-    <div>
+    <div className="task-item">
       {props.name} has {props.taskCount} tasks
     </div>
   );

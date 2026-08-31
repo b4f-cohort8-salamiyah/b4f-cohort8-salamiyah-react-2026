@@ -79,17 +79,22 @@ function App() {
         <PersonSummary name="molham" taskCount={0} />
         <PersonSummary name="nawar" taskCount={100} />
 
-        <button onClick={handleToggleGreeting}>
+        <button className="filter-button" onClick={handleToggleGreeting}>
           {showGreeting ? "Hide Greeting" : "Show Greeting"}
         </button>
 
-        <input
-          type="text"
-          value={name}
-          onChange={handelNameChange}
-          placeholder="Enter your name"
-        />
-        {name !== "" ? <p>{greetingMessage}</p> : null}
+        {showGreeting && (
+          <>
+            <input
+              className="search-input"
+              type="text"
+              value={name}
+              onChange={handelNameChange}
+              placeholder="Enter your name"
+            />
+            {name !== "" ? <p>{greetingMessage}</p> : null}
+          </>
+        )}
       </main>
     </div>
   );
