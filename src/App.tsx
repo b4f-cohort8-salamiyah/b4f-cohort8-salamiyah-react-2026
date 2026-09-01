@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
@@ -15,14 +15,39 @@ interface User {
   name: string;
 }
 
-const tasks: Task[] = [
-  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
-  { id: 2, userId: 2, title: "Review pull request", completed: true },
-  { id: 3, userId: 3, title: "Write session notes", completed: false },
-  { id: 4, userId: 1, title: "Update project README", completed: true },
-  { id: 5, userId: 2, title: "Fix search bug", completed: false },
-  { id: 6, userId: 3, title: "Plan sprint review", completed: true },
-];
+// ✅ FIXED: This is now a proper React component (capitalized)
+function FetchAllTask() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [allTasks, setAllTasks] = useState<Task[]>([]); // ✅ Typed as Task[]
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data: Task[]) => { // ✅ Type the data
+        setAllTasks(data); // ✅ Store the data
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  
+  // ✅ Return the fetched tasks (or use them in your component)
+  return allTasks;
+}
+
+// ❌ Remove this static data - we'll use the fetched data instead
+// const tasks: Task[] = [ ... ];
 
 const users: User[] = [
   { id: 1, name: "Leanne Graham" },
@@ -33,9 +58,33 @@ const users: User[] = [
 type FilterStatus = "all" | "completed" | "pending";
 
 function App() {
+  // ✅ State for fetched tasks
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [selectedUserId] = useState(0);
+  const [selectedUserId, setSelectedUserId] = useState(0); // ✅ Made this settable
+
+  // ✅ Fetch tasks when component mounts
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data: Task[]) => {
+        setTasks(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -67,6 +116,7 @@ function App() {
 
   const search = searchText.toLowerCase();
 
+  // ✅ Filter tasks (now using fetched data)
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
 
@@ -93,16 +143,41 @@ function App() {
   });
 
   const totalCount = tasks.length;
-
   const completedCount = tasks.reduce((count, task) => {
     if (task.completed) {
       return count + 1;
     }
-
     return count;
   }, 0);
-
   const pendingCount = totalCount - completedCount;
+
+  // ✅ Show loading/error states
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <main className="container">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <h2>Loading tasks...</h2>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Header />
+        <main className="container">
+          <div style={{ textAlign: 'center', padding: '40px', color: 'red' }}>
+            <h2>Error: {error}</h2>
+            <p>Please try again later.</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -150,6 +225,7 @@ function App() {
           {visibleTasks.map((task) => {
             return (
               <TaskItem
+                key={task.id} // ✅ Always add key when mapping
                 title={task.title}
                 ownerName={getOwnerName(task.userId)}
                 statusText={task.completed ? "Completed" : "Pending"}
