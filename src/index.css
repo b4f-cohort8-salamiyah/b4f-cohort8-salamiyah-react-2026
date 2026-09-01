@@ -196,70 +196,11 @@ body {
   cursor: pointer;
   font-size: 15px;
   padding: 10px 18px;
-  margin: 15px 0;
+  margin-top: 15px;
 }
 
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
-}
-
-.section-title {
-  margin-left: 15px;
-  margin-top: 15px;
-}
-.section-title p {
-  margin-top: 5px;
-  font-family: fantasy;
-  color: crimson;
-  text-transform: uppercase;
-  display: inline-block;
-  animation: floatText 3s ease-in-out infinite;
-  overflow: hidden;
-}
-
-@keyframes floatText {
-  0% {
-    transform: translateY(0px); /* Starting position */
-  }
-  50% {
-    transform: translateY(-10px); /* Moves up 20 pixels halfway through */
-  }
-  100% {
-    transform: translateY(0px); /* Returns to original position */
-  }
-}
-
-
-.greeting{
-  margin-bottom:15px ;
-}
-
-.person-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 15px;
-  color: #6b7280
-}
-
-.person-summary-card {
-  margin-top: 15px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 15px;
-}
-
-.summary-title {
-  padding: 5px;
-  font-size: 14px;
-  color: #000000;
 }
 
 .search-input:focus {

@@ -2,8 +2,6 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
-import SectionTitle from "./components/SectionTitle";
-import PersonSummary from "./components/PersonSummary";
 
 interface Task {
   id: number;
@@ -37,16 +35,7 @@ type FilterStatus = "all" | "completed" | "pending";
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-<<<<<<< HEAD
-  const [showTasks, setShowTasks] = useState(true);
-  const [showGreeting, setShowGreeting] = useState(true);
-
-  // part b
-  const [name, setName] = useState("");
-  //--
-=======
   const [selectedUserId] = useState(0);
->>>>>>> group-2
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -76,25 +65,6 @@ function App() {
     return "Unknown person";
   }
 
-<<<<<<< HEAD
-  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.target.value);
-  }
-
-  function handleToggleGreeting() {
-    setShowGreeting(!showGreeting);
-  }
-
-  let greetingMessage = "";
-
-  if (name === "") {
-    greetingMessage = "";
-  } else if (name.toLowerCase() === "admin") {
-    greetingMessage = "Welcome back, admin.";
-  } else {
-    greetingMessage = "Hello, " + name + "! ";
-  }
-=======
   const search = searchText.toLowerCase();
 
   const visibleTasks = tasks.filter((task) => {
@@ -133,30 +103,12 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
->>>>>>> group-2
 
   return (
     <div>
       <Header />
 
       <main className="container">
-        {showGreeting ? (
-          <section className="greeting">
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Enter your name..."
-              value={name}
-              onChange={handleNameChange}
-            />
-
-            {name ? <p className="search-feedback">{greetingMessage}</p> : null}
-          </section>
-        ) : null}
-        <button className="toggle-tasks-button" onClick={handleToggleGreeting}>
-          {showGreeting ? "Hide Greeting" : "Show Greeting"}
-        </button>
-
         <section className="stats">
           <StatCard label="Total Tasks" value={totalCount} />
           <StatCard label="Completed" value={completedCount} />
@@ -184,13 +136,6 @@ function App() {
           </button>
         </section>
 
-        <section className="person-summary-card">
-          <p className="summary-title">Task Per Person :</p>
-          <PersonSummary name="Leanne Graham" taskCount={1} />
-          <PersonSummary name="Ervin Howell " taskCount={2} />
-          <PersonSummary name="Clementine Bauch" taskCount={3} />
-        </section>
-
         <section className="search">
           <input
             type="text"
@@ -214,41 +159,12 @@ function App() {
           })}
         </ul>
 
-<<<<<<< HEAD
-        <SectionTitle title="Your Tasks:" subtitle="is Who Knows...?" />
-
-        {showTasks ? (
-          <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
-            />
-
-            <TaskItem
-              title="Review pull request"
-              ownerName="Ervin Howell"
-              statusText="Completed"
-              statusClass="completed"
-            />
-
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
-          </ul>
-        ) : null}
-=======
         <p className="visible-count">
           {visibleTasks.length} of {totalCount} tasks shown
         </p>
         <p className="progress">
           {completedCount} of {totalCount} tasks completed
         </p>
->>>>>>> group-2
       </main>
     </div>
   );
