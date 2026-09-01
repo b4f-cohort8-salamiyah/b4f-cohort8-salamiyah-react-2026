@@ -2,11 +2,13 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
-
+import SectionTitle from "./components/SectionTitle";
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -22,6 +24,23 @@ function App() {
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
+  }
+
+  function handleToggleTasks() {
+    setShowTasks(!showTasks);
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "yamar") {
+    greetingMessage = "Welcome back, yamar.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
   }
 
   return (
@@ -64,34 +83,49 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
+
+          {searchText ? (
+            <p className="search-feedback">Searching for: {searchText}</p>
+          ) : null}
         </section>
+        <section className="name">
+          <input
+            type="text"
+            className="name-input"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Enter your name"
+          />
+          {name ? <p>{greetingMessage}</p> : null}
+        </section>
+        <button className="toggle-tasks-button" onClick={handleToggleTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
+        <SectionTitle title="My tasks" subtitle="All tasks" />
+        {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
 
-        {searchText ? (
-          <p className="search-feedback">Searching for: {searchText}</p>
+            <TaskItem
+              title="Review pull request"
+              ownerName="Ervin Howell"
+              statusText="Completed"
+              statusClass="completed"
+            />
+
+            <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
         ) : null}
-
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
-
-          <TaskItem
-            title="Review pull request"
-            ownerName="Ervin Howell"
-            statusText="Completed"
-            statusClass="completed"
-          />
-
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>
       </main>
     </div>
   );
