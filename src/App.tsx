@@ -2,15 +2,20 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
-
+import SectionTitle from "./components/SectionTitle";
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
 
   function handleShowAll(): void {
     setCurrentFilter("all");
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
   }
 
   function handleShowCompleted() {
@@ -60,8 +65,18 @@ function App() {
             Pending
           </button>
         </section>
+      <input
+        className="greeting-input"
+        value={name}
+        placeholder="Enter your name"
+        onChange={handleNameChange}
+      />
 
-        <section className="search">
+      <p className="greeting-message">
+        {name.trim() ? `Welcome, ${name.trim()}!` : "Hello, welcome to the task manager!"}
+      </p>
+
+      <section className="search">
           <input
             type="text"
             className="search-input"
@@ -78,7 +93,7 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-
+          <SectionTitle title="Task List" />
         {showTasks ? (
           <ul className="task-list">
             <TaskItem

@@ -202,3 +202,18 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+.greeting-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.greeting-message {
+  color: #3b6ef5;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 10px;
+}
