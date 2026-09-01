@@ -111,8 +111,64 @@ body {
   border-color: #3b6ef5;
   outline: none;
 }
+/*greeting section*/
 
+.greeting-section {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.greeting-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  outline: none;
+  background-color: #ffffff;
+}
+
+.greeting-input:focus {
+  border-color: #4f46e5;
+}
+
+
+.greeting-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+  background-color: #dff6fa;
+  border: 1px solid #a2c9ef;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 0;
+}
 /* ---------- Task list ---------- */
+
+
+.section-title {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: #cbd5e1; 
+  margin: 0.5rem auto 0 auto;
+  border-radius: 2px;
+}
 
 .task-list {
   list-style: none;
