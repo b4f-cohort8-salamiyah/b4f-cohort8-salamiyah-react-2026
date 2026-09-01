@@ -2,45 +2,18 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
-// import SectionTitle from "./components/SectionTitle";
-// import PersonSummary from "./components/PersonSummary";
 
-interface Task {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
-}
 
-interface User {
-  id: number;
-  name: string;
-}
-
-const tasks: Task[] = [
-  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
-  { id: 2, userId: 2, title: "Review pull request", completed: true },
-  { id: 3, userId: 3, title: "Write session notes", completed: false },
-  { id: 4, userId: 1, title: "Update project README", completed: true },
-  { id: 5, userId: 2, title: "Fix search bug", completed: false },
-  { id: 6, userId: 3, title: "Plan sprint review", completed: true },
-];
-
-const users: User[] = [
-  { id: 1, name: "Leanne Graham" },
-  { id: 2, name: "Ervin Howell" },
-  { id: 3, name: "Clementine Bauch" },
-];
-
-type FilterStatus = "all" | "completed" | "pending";
 
 function App() {
-  const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
+  // const currentFilter = "completed";
+  const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
-  const [selectedUserId] = useState(0);
+  const [showTasks, setShowTasks] = useState(true);
 
-  function handleShowAll() {
+  function handleShowAll(): void {
     setCurrentFilter("all");
   }
 
@@ -56,72 +29,38 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function getOwnerName(userId: number): string {
-    const user = users.find(function (user) {
-      return user.id === userId;
-    });
+  function handleToggleTasks() {
+    setShowTasks(!showTasks);
+  }
+    const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(true);
 
-    if (user) {
-      return user.name;
-    }
-
-    return "Unknown person";
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
   }
 
-  const totalCount = tasks.length;
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
 
-  const completedCount = tasks.reduce((count, task) => {
-    if (task.completed) {
-      return count + 1;
-    }
-
-    return count;
-  }, 0);
-
-  const pendingCount = totalCount - completedCount;
-
-  const search = searchText.toLowerCase();
-  const visibleTasks = tasks.filter((task) => {
-    let matchesFilter = false;
-
-    if (currentFilter === "all") {
-      matchesFilter = true;
-    } else if (currentFilter === "completed" && task.completed) {
-      matchesFilter = true;
-    } else if (currentFilter === "pending" && !task.completed) {
-      matchesFilter = true;
-    }
-
-    const title = task.title.toLowerCase();
-    const matchesSearch = title.includes(search);
-
-    let matchesPerson = false;
-
-    if (selectedUserId === 0) {
-      matchesPerson = true;
-    } else if (selectedUserId === task.userId) {
-      matchesPerson = true;
-    }
-
-    return matchesFilter && matchesSearch && matchesPerson;
-  });
-
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
   return (
     <div>
       <Header />
+
       <main className="container">
         <section className="stats">
-          <StatCard label="Total Tasks" value={totalCount} />
-          <StatCard label="Completed" value={completedCount} />
-          <StatCard label="Pending" value={pendingCount} />
+          <StatCard label="Total Tasks" value={3} />
+          <StatCard label="Completed" value={1} />
+          <StatCard label="Pending" value={2} />
         </section>
-
-        <p className="visible-count">
-          {visibleTasks.length} of {tasks.length} tasks shown
-        </p>
-        <p className="progress">
-          {completedCount} of {totalCount} tasks completed
-        </p>
 
         <section className="filters">
           <button
@@ -144,26 +83,6 @@ function App() {
           </button>
         </section>
 
-        <section className="filters">
-          <button
-            className={`filter-button ${selectedUserId === 0 ? "active" : ""} `}
-          >
-            All People
-          </button>
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary name={user.name} taskCount={personTaskCount} />
-            );
-          })}
-        </section>
         <section className="search">
           <input
             type="text"
@@ -172,30 +91,61 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
+
+          {searchText ? (
+            <p className="search-feedback">Searching for: {searchText}</p>
+          ) : null}
         </section>
+                <button onClick={handleToggleGreeting}>
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
+        </button>
 
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
+        {showGreeting ? (
+          <section className="name-greeting">
+            <input
+              type="text"
+              placeholder="Enter your name..."
+              value={name}
+              onChange={handleNameChange}
+            />
+            {name !== "" ? <p>{greetingMessage}</p> : null}
+          </section>
+        ) : null}
 
-            return (
-              <TaskItem
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
-
-        {/* <PersonSummary name="Leanne Graham" taskCount={1} />
+        <PersonSummary name="Leanne Graham" taskCount={1} />
         <PersonSummary name="Ervin Howell" taskCount={1} />
-        <PersonSummary name="Clementine Bauch" taskCount={1} /> */}
+        <PersonSummary name="Clementine Bauch" taskCount={1} />
+
+        <button className="toggle-tasks-button" onClick={handleToggleTasks}>
+          {showTasks ? "Hide Tasks" : "Show Tasks"}
+        </button>
+        <SectionTitle title="Your Tasks" subtitle="Manage your daily items here" />
+               {showTasks ? (
+          <ul className="task-list">
+            <TaskItem
+              title="Finish JavaScript exercise"
+              ownerName="Leanne Graham"
+              statusText="Pending"
+              statusClass="pending"
+            />
+            <TaskItem
+              title="Review pull request"
+              ownerName="Ervin Howell"
+              statusText="Completed"
+              statusClass="completed"
+            />
+                        <TaskItem
+              title="Write session notes"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+          </ul>
+        ) : null}
       </main>
     </div>
   );
 }
 
 export default App;
+
