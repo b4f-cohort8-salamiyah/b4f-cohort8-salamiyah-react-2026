@@ -1,13 +1,24 @@
-import { ChangeEvent, useState } from "react";
+import  { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import { SectionTitle } from "./components/SectionTitle";
+import { PersonSummary } from "./components/PersonSummary";
 
 function App() {
-  // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
+  const [showGreetingSection, setShowGreetingSection] = useState(true);
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
+  function handleToggleGreetingSection() {
+    setShowGreetingSection(!showGreetingSection);
+  }
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -29,9 +40,24 @@ function App() {
     setShowTasks(!showTasks);
   }
 
+  // حساب رسالة التحية المشروطة بشكل مركزي قبل الـ return
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin.";
+  } else {
+    greetingMessage = "Hello, " + name + "!";
+  }
+
   return (
     <div>
       <Header />
+      <div className="person-summaries">
+        <PersonSummary name="Alice" taskCount={3} />
+        <PersonSummary name="Bob" taskCount={5} />
+        <PersonSummary name="Charlie" taskCount={2} />
+      </div>
 
       <main className="container">
         <section className="stats">
@@ -78,6 +104,30 @@ function App() {
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
+
+        <SectionTitle
+          title="Your Tasks"
+          subtitle="Manage what you need to do tonight"
+        />
+
+        {/* زر وميزة الإخفاء والإظهار لقسم التحية */}
+        <button onClick={handleToggleGreetingSection}>
+          {showGreetingSection
+            ? "Hide Greeting Feature"
+            : "Show Greeting Feature"}
+        </button>
+
+        {showGreetingSection ? (
+          <div style={{ marginTop: "10px", marginBottom: "20px" }}>
+            <input
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              placeholder="Enter your name"
+            />
+            {name !== "" ? <p>{greetingMessage}</p> : null}
+          </div>
+        ) : null}
 
         {showTasks ? (
           <ul className="task-list">
