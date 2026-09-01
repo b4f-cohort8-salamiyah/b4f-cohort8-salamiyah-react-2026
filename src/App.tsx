@@ -7,6 +7,7 @@ function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [showTasks,setShowtasks] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -23,6 +24,11 @@ function App() {
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
   }
+
+  function handleShowTasks() {
+    setShowtasks(!showTasks);
+  }
+
 
   return (
     <div>
@@ -70,6 +76,8 @@ function App() {
           <p className="search-feedback">Searching for: {searchText}</p>
         ) : null}
 
+        <button onClick={handleShowTasks} className="toggle-tasks-button">{showTasks ? "Hide":"Show"}</button>
+        {!showTasks? null :
         <ul className="task-list">
           <TaskItem
             title="Finish JavaScript exercise"
@@ -91,7 +99,9 @@ function App() {
             statusText="Pending"
             statusClass="pending"
           />
-        </ul>
+        </ul>}
+
+
       </main>
     </div>
   );
