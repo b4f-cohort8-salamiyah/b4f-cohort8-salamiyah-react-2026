@@ -262,3 +262,21 @@ body {
   color: #000000;
 }
 
+.search-input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+
+/* ---------- Derived counts / progress ---------- */
+
+.visible-count {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+.progress {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
