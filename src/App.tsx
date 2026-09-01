@@ -2,12 +2,16 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -27,6 +31,23 @@ function App() {
 
   function handleToggleTasks() {
     setShowTasks(!showTasks);
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.target.value);
+  }
+
+  function handleToggleGreeting() {
+    setShowGreeting(!showGreeting);
+  }
+
+  let greetingMessage = "";
+  if (name === "") {
+    greetingMessage = "";
+  } else if (name === "admin") {
+    greetingMessage = "Welcome back, admin! 👑";
+  } else {
+    greetingMessage = "Hello, " + name + "! 👋";
   }
 
   return (
@@ -61,6 +82,31 @@ function App() {
           </button>
         </section>
 
+        <section className="greeting-feature">
+          <button
+            className="toggle-greeting-button"
+            onClick={handleToggleGreeting}
+          >
+            {showGreeting ? "Hide Greeting" : "Show Greeting"}
+          </button>
+
+          {showGreeting ? (
+            <div className="greeting">
+              <input
+                type="text"
+                className="greeting-input"
+                placeholder="Enter Your Name"
+                value={name}
+                onChange={handleNameChange}
+              />
+
+              {name ? (
+                <p className="greeting-feedback">{greetingMessage}</p>
+              ) : null}
+            </div>
+          ) : null}
+        </section>
+
         <section className="search">
           <input
             type="text"
@@ -80,28 +126,41 @@ function App() {
         </button>
 
         {showTasks ? (
-          <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
-            />
+          <div>
+            <SectionTitle
+              title="Your Tasks"
+              subtitle="Track your tasks here"
+            ></SectionTitle>
 
-            <TaskItem
-              title="Review pull request"
-              ownerName="Ervin Howell"
-              statusText="Completed"
-              statusClass="completed"
-            />
+            <section className="people-summary">
+              <PersonSummary name="Rami Alshaar" taskCount={3} />
+              <PersonSummary name="samer somar" taskCount={1} />
+              <PersonSummary name="farah fahmi" taskCount={2} />
+            </section>
 
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
-          </ul>
+            <ul className="task-list">
+              <TaskItem
+                title="Finish JavaScript exercise"
+                ownerName="Leanne Graham"
+                statusText="Pending"
+                statusClass="pending"
+              />
+
+              <TaskItem
+                title="Review pull request"
+                ownerName="Ervin Howell"
+                statusText="Completed"
+                statusClass="completed"
+              />
+
+              <TaskItem
+                title="Write session notes"
+                ownerName="Clementine Bauch"
+                statusText="Pending"
+                statusClass="pending"
+              />
+            </ul>
+          </div>
         ) : null}
       </main>
     </div>
