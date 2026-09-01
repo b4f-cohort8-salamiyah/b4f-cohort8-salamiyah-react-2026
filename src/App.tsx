@@ -1,20 +1,29 @@
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 import { ChangeEvent, useState } from "react";
 
 export default function App() {
   // let currentFilter = "all";
+  let greeting = "";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowedTasks] = useState(true);
-
+  const [searchUser, setSearchUser] = useState("");
+  if (searchUser === "") greeting = "";
+  else if (searchUser === "Yazan") greeting = "Welcome back, Admin";
+  else greeting = `Hello ${searchUser}`;
   function handleShowedTasks() {
     setShowedTasks(!showTasks);
   }
 
   function handleSearchText(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
+  }
+  function handleSearchUser(event: ChangeEvent<HTMLInputElement>) {
+    setSearchUser(event.target.value);
   }
 
   function handleShowAll() {
@@ -37,6 +46,9 @@ export default function App() {
           <StatCard label="Completed" value={1} />
           <StatCard label="Pending" value={2} />
         </section>
+        <PersonSummary name="Leanne Graham" taskCount={1} />
+        <PersonSummary name="Ervin Howell" taskCount={1} />
+        <PersonSummary name="Clementine Bauch" taskCount={1} />
 
         <section className="filters">
           <button
@@ -67,12 +79,21 @@ export default function App() {
             value={searchText}
             onChange={handleSearchText}
           />
+          {searchText ? <p>Searching For: {searchText}</p> : null}
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search users..."
+            value={searchUser}
+            onChange={handleSearchUser}
+          />
+          {searchUser ? <p>{greeting}</p> : null}
         </section>
 
         <button className="toggle-tasks-button" onClick={handleShowedTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
-
+        <SectionTitle title="Your Tasks" subtitle="All here" />
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
