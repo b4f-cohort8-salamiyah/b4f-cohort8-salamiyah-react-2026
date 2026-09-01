@@ -160,9 +160,9 @@ function App() {
           </button>
         </section>
         <section className="person-summary">
-          <PersonSummary name="Leanne Graham" taskCount={totalCount} />
-          <PersonSummary name="Ervin Howell" taskCount={totalCount} />
-          <PersonSummary name="Clementine Bauch" taskCount={totalCount} />
+          <PersonSummary name="Leanne Graham" taskCount={2} />
+          <PersonSummary name="Ervin Howell" taskCount={2} />
+          <PersonSummary name="Clementine Bauch" taskCount={2} />
         </section>
         <section className="search">
           <input
@@ -194,40 +194,18 @@ function App() {
         <SectionTitle title="My tasks" subtitle="All tasks" />
         {showTasks ? (
           <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
-            />
-
-            <TaskItem
-              title="Review pull request"
-              ownerName="Ervin Howell"
-              statusText="Completed"
-              statusClass="completed"
-            />
-
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
+            {visibleTasks.map((task) => {
+              return (
+                <TaskItem
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={task.completed ? "Completed" : "Pending"}
+                  statusClass={task.completed ? "completed" : "pending"}
+                />
+              );
+            })}
           </ul>
         ) : null}
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            return (
-              <TaskItem
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={task.completed ? "Completed" : "Pending"}
-                statusClass={task.completed ? "completed" : "pending"}
-              />
-            );
-          })}
-        </ul>
         <p className="visible-count">
           {visibleTasks.length} of {totalCount} tasks shown
         </p>
