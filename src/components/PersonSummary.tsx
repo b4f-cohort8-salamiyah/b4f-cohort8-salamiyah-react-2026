@@ -5,10 +5,9 @@ interface PersonSummaryProps {
 
 function PersonSummary(props: PersonSummaryProps) {
   return (
-    <button className="filter-button">{props.name} - {props.taskCount}</button>
-    // <p>
-    //   {props.name} - {props.taskCount} tasks
-    // </p>
+    <p>
+      {props.name} - {props.taskCount} tasks
+    </p>
   );
 }
 

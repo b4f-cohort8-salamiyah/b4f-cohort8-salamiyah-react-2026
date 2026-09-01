@@ -1,10 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
-// import SectionTitle from "./components/SectionTitle";
-// import PersonSummary from "./components/PersonSummary";
 
 interface Task {
   id: number;
@@ -17,6 +17,8 @@ interface User {
   id: number;
   name: string;
 }
+
+type FilterStatus = "all" | "completed" | "pending";
 
 const tasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
@@ -33,12 +35,22 @@ const users: User[] = [
   { id: 3, name: "Clementine Bauch" },
 ];
 
-type FilterStatus = "all" | "completed" | "pending";
+function getOwnerName(userId: number): string {
+  const user = users.find(function (user) {
+    return user.id === userId;
+  });
+
+  if (user) {
+    return user.name;
+  }
+
+  return "Unknown person";
+}
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [selectedUserId] = useState(0);
+  const [selectedUserId, setSelectedUserId] = useState(0);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -56,31 +68,12 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function getOwnerName(userId: number): string {
-    const user = users.find(function (user) {
-      return user.id === userId;
-    });
-
-    if (user) {
-      return user.name;
-    }
-
-    return "Unknown person";
+  function handleShowAllPeople() {
+    setSelectedUserId(0);
   }
 
-  const totalCount = tasks.length;
-
-  const completedCount = tasks.reduce((count, task) => {
-    if (task.completed) {
-      return count + 1;
-    }
-
-    return count;
-  }, 0);
-
-  const pendingCount = totalCount - completedCount;
-
   const search = searchText.toLowerCase();
+
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
 
@@ -99,16 +92,29 @@ function App() {
 
     if (selectedUserId === 0) {
       matchesPerson = true;
-    } else if (selectedUserId === task.userId) {
+    } else if (task.userId === selectedUserId) {
       matchesPerson = true;
     }
 
     return matchesFilter && matchesSearch && matchesPerson;
   });
 
+  const totalCount = tasks.length;
+
+  const completedCount = tasks.reduce(function (count, task) {
+    if (task.completed) {
+      return count + 1;
+    }
+
+    return count;
+  }, 0);
+
+  const pendingCount = totalCount - completedCount;
+
   return (
     <div>
       <Header />
+
       <main className="container">
         <section className="stats">
           <StatCard label="Total Tasks" value={totalCount} />
@@ -116,54 +122,33 @@ function App() {
           <StatCard label="Pending" value={pendingCount} />
         </section>
 
-        <p className="visible-count">
-          {visibleTasks.length} of {tasks.length} tasks shown
-        </p>
-        <p className="progress">
-          {completedCount} of {totalCount} tasks completed
-        </p>
-
         <section className="filters">
           <button
-            className={`filter-button ${currentFilter === "all" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "all" ? " active" : "")
+            }
             onClick={handleShowAll}
           >
             All
           </button>
           <button
-            className={`filter-button ${currentFilter === "completed" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "completed" ? " active" : "")
+            }
             onClick={handleShowCompleted}
           >
             Completed
           </button>
           <button
-            className={`filter-button ${currentFilter === "pending" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "pending" ? " active" : "")
+            }
             onClick={handleShowPending}
           >
             Pending
           </button>
         </section>
 
-        <section className="filters">
-          <button
-            className={`filter-button ${selectedUserId === 0 ? "active" : ""} `}
-          >
-            All People
-          </button>
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary name={user.name} taskCount={personTaskCount} />
-            );
-          })}
-        </section>
         <section className="search">
           <input
             type="text"
@@ -174,6 +159,40 @@ function App() {
           />
         </section>
 
+        <SectionTitle
+          title="Your Tasks"
+          subtitle="Everything on your plate right now."
+        />
+
+        {users.map((user) => {
+          const personTaskCount = tasks.filter(
+            (task) => task.userId === user.id,
+          ).length;
+
+          if (personTaskCount === 0) {
+            return null;
+          }
+
+          return <PersonSummary name={user.name} taskCount={personTaskCount} />;
+        })}
+
+        <section className="filters">
+          <button
+            className={
+              "filter-button" + (selectedUserId === 0 ? " active" : "")
+            }
+            onClick={handleShowAllPeople}
+          >
+            All people
+          </button>
+
+          {users.map((user) => (
+            <button key={user.id} className="filter-button">
+              {user.name}
+            </button>
+          ))}
+        </section>
+
         <ul className="task-list">
           {visibleTasks.map((task) => {
             const statusText = task.completed ? "Completed" : "Pending";
@@ -181,6 +200,7 @@ function App() {
 
             return (
               <TaskItem
+                key={task.id}
                 title={task.title}
                 ownerName={getOwnerName(task.userId)}
                 statusText={statusText}
@@ -190,9 +210,12 @@ function App() {
           })}
         </ul>
 
-        {/* <PersonSummary name="Leanne Graham" taskCount={1} />
-        <PersonSummary name="Ervin Howell" taskCount={1} />
-        <PersonSummary name="Clementine Bauch" taskCount={1} /> */}
+        <p className="visible-count">
+          {visibleTasks.length} of {tasks.length} tasks shown
+        </p>
+        <p className="progress">
+          {completedCount} of {totalCount} tasks completed
+        </p>
       </main>
     </div>
   );
