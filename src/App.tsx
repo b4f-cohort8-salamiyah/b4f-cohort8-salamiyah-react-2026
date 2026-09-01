@@ -2,12 +2,17 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/sectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
   // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [yourName, setYourName] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+  const [showGreet, setShowGreet] = useState(true);
+
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -29,6 +34,22 @@ function App() {
     setShowTasks(!showTasks);
   }
 
+  function handleChangeName(event: ChangeEvent<HTMLInputElement>) {
+    setYourName(event.target.value);
+  }
+
+  function handleToggleGreeting() {
+   setShowGreet(!showGreet);
+  }
+  let greetingMessage = "";
+  if (yourName === "") {
+   greetingMessage = "";
+  } else if (yourName=== "admin") {
+   greetingMessage = "Welcome back, admin.";
+  } else {
+   greetingMessage = "Hello, " + yourName + "!";
+  }
+
   return (
     <div>
       <Header />
@@ -39,6 +60,12 @@ function App() {
           <StatCard label="Completed" value={1} />
           <StatCard label="Pending" value={2} />
         </section>
+
+        <section className="people-summary">
+           <PersonSummary name="Leanne Graham" taskCount={1} />
+           <PersonSummary name="Ervin Howell" taskCount={1} />
+           <PersonSummary name="Clementine Bauch" taskCount={1} />
+         </section>
 
         <section className="filters">
           <button
@@ -59,6 +86,13 @@ function App() {
           >
             Pending
           </button>
+
+          <button
+           className="toggle-greeting-button"
+           onClick={handleToggleGreeting}
+          >
+         {showGreet ? "Hide Greeting" : "Show Greeting"}
+         </button>
         </section>
 
         <section className="search">
@@ -76,10 +110,38 @@ function App() {
         </section>
 
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
-          {showTasks ? "Hide Tasks" : "Show Tasks"}
+             {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
+       <button
+          className="toggle-greeting-button"
+          onClick={handleToggleGreeting}
+         >
+            {showGreet ? "Hide Greeting" : "Show Greeting"}
+       </button>
+
+     
+
+        {showGreet ? (
+      <section className="greeting-section">
+          <input
+           type="text"
+           placeholder="Enter your name"
+           value={yourName}
+           onChange={handleChangeName}
+           />
+
+         {yourName ? <p>{greetingMessage}</p> : null}
+       </section>
+     ) : null}
+
+
         {showTasks ? (
+          <section>
+            <SectionTitle 
+            title="Your Tasks"
+            subTitle="Manage your tasks and keep track of your progress"/>
+
           <ul className="task-list">
             <TaskItem
               title="Finish JavaScript exercise"
@@ -102,6 +164,8 @@ function App() {
               statusClass="pending"
             />
           </ul>
+          </section>
+
         ) : null}
       </main>
     </div>
