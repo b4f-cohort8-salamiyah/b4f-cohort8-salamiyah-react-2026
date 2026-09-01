@@ -10,7 +10,7 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
   const [name, setName] = useState("");
-  const [value, setValue] = useState(true);
+  const [showGreeting, setShowGreeting] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -36,7 +36,7 @@ function App() {
     setName(event.target.value);
   }
   function handleToggleGreeting() {
-    setValue(!value);
+    setShowGreeting(!showGreeting);
   }
 
   let greetingMessage = "";
@@ -80,9 +80,9 @@ function App() {
           </button>
         </section>
         <section className="person-summary">
-          <PersonSummary name="John Doe" taskCount={1} />
-          <PersonSummary name="John Doe" taskCount={1} />
-          <PersonSummary name="John Doe" taskCount={1} />
+          <PersonSummary name="Leanne Graham" taskCount={1} />
+          <PersonSummary name="Ervin Howell" taskCount={1} />
+          <PersonSummary name="Clementine Bauch" taskCount={1} />
         </section>
         <section className="search">
           <input
@@ -98,9 +98,9 @@ function App() {
           ) : null}
         </section>
         <button className="greeting-button" onClick={handleToggleGreeting}>
-          {value ? "Hide Greeting" : "Show Greeting"}
+          {showGreeting ? "Hide Greeting" : "Show Greeting"}
         </button>
-        {value ? (
+        {showGreeting ? (
           <section className="name">
             <input
               type="text"
