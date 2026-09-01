@@ -2,12 +2,16 @@ import { ChangeEvent, useState } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
+import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
+
 
 function App() {
-  // const currentFilter = "completed";
   const [currentFilter, setCurrentFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [showTasks, setShowTasks] = useState(true);
+ const [name, setName] = useState("");
+ const [showGreetingSection, setShowGreetingSection] = useState(true);
 
   function handleShowAll(): void {
     setCurrentFilter("all");
@@ -28,6 +32,22 @@ function App() {
   function handleToggleTasks() {
     setShowTasks(!showTasks);
   }
+function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+  setName(event.target.value);
+}
+
+function handleToggleGreeting() {
+  setShowGreetingSection(!showGreetingSection);
+}
+
+let greetingMessage = "";
+if (name === "") {
+  greetingMessage = "";
+} else if (name === "admin") {
+  greetingMessage = "Welcome back, admin.";
+} else {
+  greetingMessage = "Hello, " + name + "!";
+}
 
   return (
     <div>
@@ -60,6 +80,34 @@ function App() {
             Pending
           </button>
         </section>
+        <div className="hw-toggle-wrapper">
+          <button onClick={handleToggleGreeting} className="hw-toggle-button">
+            {showGreetingSection ? "Hide " : "Show "}
+          </button>
+        </div>
+
+        {showGreetingSection ?
+          <div className="hw-greeting-card">
+            <label className="hw-greeting-label">Control Name :</label>
+            <input
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              placeholder="Type your name..."
+              className="hw-greeting-input"
+            />
+            {name !== "" ?
+              <p className="hw-greeting-output">{greetingMessage}</p>
+            : null}
+          </div>
+        : null}
+
+        <div className="hw-summary-card">
+          <h3 className="hw-summary-header">Team Task Summary</h3>
+          <PersonSummary name="Ali Mikdad" taskCount={2} />
+          <PersonSummary name="Allaith Issa" taskCount={1} />
+          <PersonSummary name="Ceniorrr Nawar " taskCount={0} />
+        </div>
 
         <section className="search">
           <input
@@ -70,16 +118,21 @@ function App() {
             onChange={handleSearchChange}
           />
 
-          {searchText ? (
+          {searchText ?
             <p className="search-feedback">Searching for: {searchText}</p>
-          ) : null}
+          : null}
         </section>
 
         <button className="toggle-tasks-button" onClick={handleToggleTasks}>
           {showTasks ? "Hide Tasks" : "Show Tasks"}
         </button>
 
-        {showTasks ? (
+        <SectionTitle
+          title="Your Workspace Tasks"
+          subtitle="Review, manage, and track your daily team operations below."
+        />
+
+        {showTasks ?
           <ul className="task-list">
             <TaskItem
               title="Finish JavaScript exercise"
@@ -102,7 +155,7 @@ function App() {
               statusClass="pending"
             />
           </ul>
-        ) : null}
+        : null}
       </main>
     </div>
   );
