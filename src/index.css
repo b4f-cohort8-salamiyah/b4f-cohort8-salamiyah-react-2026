@@ -200,3 +200,56 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+/*  homework */
+.title {
+  text-align: center;
+
+  color: #3b6ef5;
+}
+.subtitle {
+  text-align: center;
+
+  color: #1f2430;
+}
+.name {
+  margin-top: 15px;
+}
+
+.name-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.name-input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+.greeting {
+  text-align: center;
+  color: #335aa9;
+  font-size: 23px;
+  margin-top: 8px;
+}
+.summary-countiner {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+}
+.toggle-greeting {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 18px;
+  margin-top: 15px;
+}
+
+.toggle-greeting:hover {
+  border-color: #3b6ef5;
+}
