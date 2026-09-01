@@ -202,3 +202,62 @@ body {
 .toggle-tasks-button:hover {
   border-color: #3b6ef5;
 }
+.section-title {
+  color: #3b6ef5;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.name-input-section {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 18px;
+  margin-top: 15px;
+}
+.name-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+}
+.name-feedback {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 8px;
+}
+.section-sub-title {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.personlist-summary {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 12px 18px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  margin-top: 24px;
+}
+.person-taskcount {
+  font-size: 14px; 
+  font-weight: bold;
+  color: #1e3a8a; 
+  background-color: #eff6ff; 
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.person-name {
+  color: #374151; 
+  font-size: 16px; 
+  font-weight: 600;
+}
