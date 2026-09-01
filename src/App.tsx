@@ -160,9 +160,9 @@ function App() {
           </button>
         </section>
         <section className="person-summary">
-          <PersonSummary name="Leanne Graham" taskCount={2} />
-          <PersonSummary name="Ervin Howell" taskCount={2} />
-          <PersonSummary name="Clementine Bauch" taskCount={2} />
+          <PersonSummary name="Leanne Graham" taskCount={totalCount} />
+          <PersonSummary name="Ervin Howell" taskCount={totalCount} />
+          <PersonSummary name="Clementine Bauch" taskCount={totalCount} />
         </section>
         <section className="search">
           <input
