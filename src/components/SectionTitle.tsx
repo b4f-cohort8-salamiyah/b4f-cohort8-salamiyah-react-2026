@@ -1,13 +1,13 @@
-interface TitleProps {
+interface SectionTitleProps {
   title: string;
   subtitle: string;
 }
 
-function SectionTitle(props: TitleProps) {
+function SectionTitle(props: SectionTitleProps) {
   return (
-    <div>
-      <h1 style={{ textAlign: "center" }}>{props.title}</h1>
-      <p style={{ textAlign: "center" }}>{props.subtitle}</p>
+    <div className="section-title">
+      <h2>{props.title}</h2>
+      <p>{props.subtitle}</p>
     </div>
   );
 }

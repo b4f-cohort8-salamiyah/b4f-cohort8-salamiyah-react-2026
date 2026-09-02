@@ -1,14 +1,13 @@
-interface person {
+interface PersonSummaryProps {
   name: string;
   taskCount: number;
 }
 
-function PersonSummary(props: person) {
+function PersonSummary(props: PersonSummaryProps) {
   return (
-    <div className="person-data">
-      <span >{props.name}</span>
-      <span >{props.taskCount}</span>
-    </div>
+    <p className="person-summary">
+      {props.name} - {props.taskCount} tasks
+    </p>
   );
 }
 
