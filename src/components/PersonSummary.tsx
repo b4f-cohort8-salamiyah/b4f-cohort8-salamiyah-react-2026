@@ -1,14 +1,14 @@
-interface PersonSummary {
+interface PersonSummaryProps {
   name: string;
   taskCount: number;
 }
 
-export default function PersonSummary(props: PersonSummary) {
+function PersonSummary(props: PersonSummaryProps) {
   return (
-    <div className="summary-countiner">
-      <p className="person-summary">
-        {props.name} : {props.taskCount}
-      </p>
-    </div>
+    <p>
+      {props.name} - {props.taskCount} tasks
+    </p>
   );
 }
+
+export default PersonSummary;

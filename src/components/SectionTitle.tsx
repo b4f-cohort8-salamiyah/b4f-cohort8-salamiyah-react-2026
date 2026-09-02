@@ -1,12 +1,15 @@
-interface TitleProps {
+interface SectionTitleProps {
   title: string;
   subtitle: string;
 }
-export default function SectionTitle(props: TitleProps) {
+
+function SectionTitle(props: SectionTitleProps) {
   return (
-    <section className="section-title">
-      <h2 className="title">{props.title}</h2>
-      <p className="subtitle">{props.subtitle}</p>
-    </section>
+    <div>
+      <h2>{props.title}</h2>
+      <p>{props.subtitle}</p>
+    </div>
   );
 }
+
+export default SectionTitle;

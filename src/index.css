@@ -1,3 +1,5 @@
+/* ---------- Basic setup ---------- */
+
 * {
   margin: 0;
   padding: 0;
@@ -112,6 +114,24 @@ body {
   outline: none;
 }
 
+/* ---------- Section title ---------- */
+
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 12px;
+}
+
+.section-title h2 {
+  font-size: 19px;
+  color: #1f2430;
+}
+
+.section-title p {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
 /* ---------- Task list ---------- */
 
 .task-list {
@@ -159,6 +179,51 @@ body {
   background-color: #e08b1a;
 }
 
+/* ---------- People summary ---------- */
+
+.people-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.person-summary {
+  color: #1f2430;
+  font-size: 14px;
+}
+
+/* ---------- Derived counts / progress ---------- */
+
+.visible-count {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.progress {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+/* ---------- Empty state ---------- */
+/* Instructor-provided styling for the homework's empty-result message.
+   Unused until that message's JSX is added (STRETCH homework); this
+   comment is not a hint about where/how to add it. */
+
+.empty-state {
+  color: #6b7280;
+  font-size: 15px;
+  margin-top: 20px;
+  text-align: center;
+}
+
 /* ---------- Small screens ---------- */
 
 @media (max-width: 600px) {
@@ -173,83 +238,4 @@ body {
   .filters {
     flex-wrap: wrap;
   }
-}
-
-.search-input:focus {
-  border-color: #3b6ef5;
-  outline: none;
-}
-
-.search-feedback {
-  color: #6b7280;
-  font-size: 13px;
-  margin-top: 8px;
-}
-
-.toggle-tasks-button {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  color: #1f2430;
-  cursor: pointer;
-  font-size: 15px;
-  padding: 10px 18px;
-  margin-top: 15px;
-}
-
-.toggle-tasks-button:hover {
-  border-color: #3b6ef5;
-}
-/*  homework */
-.title {
-  text-align: center;
-
-  color: #3b6ef5;
-}
-.subtitle {
-  text-align: center;
-
-  color: #1f2430;
-}
-.name {
-  margin-top: 15px;
-}
-
-.name-input {
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  font-size: 15px;
-  padding: 10px 14px;
-  width: 100%;
-}
-
-.name-input:focus {
-  border-color: #3b6ef5;
-  outline: none;
-}
-.greeting {
-  text-align: center;
-  color: #335aa9;
-  font-size: 23px;
-  margin-top: 8px;
-}
-.summary-countiner {
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  font-size: 15px;
-  padding: 10px 14px;
-}
-.toggle-greeting {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  color: #1f2430;
-  cursor: pointer;
-  font-size: 15px;
-  padding: 10px 18px;
-  margin-top: 15px;
-}
-
-.toggle-greeting:hover {
-  border-color: #3b6ef5;
 }
