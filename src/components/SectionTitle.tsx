@@ -1,15 +1,15 @@
 interface SectionTitleProps {
   title: string;
-  subtitle :string;
+  subtitle: string;
 }
 
 function SectionTitle(props: SectionTitleProps) {
-    return (
-      <section className="section-heading">
-        <h2 className="section-title">{props.title}</h2>
-        <p className="section-subtitle">{props.subtitle}</p>
-      </section>
-    );
+  return (
+    <div className="section-title">
+      <h2>{props.title}</h2>
+      <p>{props.subtitle}</p>
+    </div>
+  );
 }
- 
+
 export default SectionTitle;

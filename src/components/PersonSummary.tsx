@@ -1,15 +1,14 @@
 interface PersonSummaryProps {
-    name: string;
-    taskCount: number;
+  name: string;
+  taskCount: number;
 }
 
-function PersonSummary(props: PersonSummaryProps) { 
-    return (
-        <section className="person-summary">
-            <h3>{props.name}</h3>
-            <p>Tasks: {props.taskCount}</p>
-        </section>
-    );
+function PersonSummary(props: PersonSummaryProps) {
+  return (
+    <p className="person-summary">
+      {props.name} - {props.taskCount} tasks
+    </p>
+  );
 }
 
 export default PersonSummary;
