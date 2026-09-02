@@ -164,17 +164,25 @@ function App() {
           subtitle="Everything on your plate right now."
         />
 
-        {users.map((user) => {
-          const personTaskCount = tasks.filter(
-            (task) => task.userId === user.id,
-          ).length;
+        <section className="people-summary">
+          {users.map((user) => {
+            const personTaskCount = tasks.filter(
+              (task) => task.userId === user.id,
+            ).length;
 
-          if (personTaskCount === 0) {
-            return null;
-          }
+            if (personTaskCount === 0) {
+              return null;
+            }
 
-          return <PersonSummary name={user.name} taskCount={personTaskCount} />;
-        })}
+            return (
+              <PersonSummary
+                key={user.id}
+                name={user.name}
+                taskCount={personTaskCount}
+              />
+            );
+          })}
+        </section>
 
         <section className="filters">
           <button
