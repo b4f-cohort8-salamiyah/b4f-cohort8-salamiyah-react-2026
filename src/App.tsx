@@ -5,8 +5,6 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
-<<<<<<< HEAD
-=======
 
 interface Task {
   id: number;
@@ -48,18 +46,11 @@ function getOwnerName(userId: number): string {
 
   return "Unknown person";
 }
->>>>>>> group-2
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-<<<<<<< HEAD
-  const [showTasks, setShowTasks] = useState(true);
-  const [name, setName] = useState("");
-  const [showGreeting, setShowGreeting] = useState(true);
-=======
   const [selectedUserId, setSelectedUserId] = useState(0);
->>>>>>> group-2
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -81,23 +72,6 @@ function App() {
     setSelectedUserId(0);
   }
 
-<<<<<<< HEAD
-  function handleUserName(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.target.value);
-  }
-  function handleToggleGreeting() {
-    setShowGreeting(!showGreeting);
-  }
-  let greetingMessage = "";
-
-  if (name === "") {
-    greetingMessage = "";
-  } else if (name === "admin") {
-    greetingMessage = "Welcome back, admin.";
-  } else {
-    greetingMessage = "Hello, " + name + "!";
-  }
-=======
   const search = searchText.toLowerCase();
 
   const visibleTasks = tasks.filter((task) => {
@@ -137,7 +111,6 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
->>>>>>> group-2
   return (
     <div>
       <Header />
@@ -186,44 +159,6 @@ function App() {
           />
         </section>
 
-<<<<<<< HEAD
-        <button
-          className="toggle-greeting-button"
-          onClick={handleToggleGreeting}
-        >
-          {showGreeting ? "Hide Name Section" : "Show Name Section"}
-        </button>
-        {showGreeting ? (
-          <div className="name">
-            <label>Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={handleUserName}
-              placeholder="Enter Your name"
-            />
-            {name !== "" ? <p>{greetingMessage}</p> : null}
-          </div>
-        ) : null}
-
-        <button className="toggle-tasks-button" onClick={handleToggleTasks}>
-          {showTasks ? "Hide Tasks" : "Show Tasks"}
-        </button>
-
-        <SectionTitle
-          title="Your Tasks"
-          subtitle="Manage your daily productivity below"
-        />
-
-        {showTasks ? (
-          <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
-            />
-=======
         <SectionTitle
           title="Your Tasks"
           subtitle="Everything on your plate right now."
@@ -234,31 +169,11 @@ function App() {
             const personTaskCount = tasks.filter(
               (task) => task.userId === user.id,
             ).length;
->>>>>>> group-2
 
             if (personTaskCount === 0) {
               return null;
             }
 
-<<<<<<< HEAD
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
-          </ul>
-        ) : null}
-        <div className="personSamary">
-          <SectionTitle
-            title="Assignees Summary"
-            subtitle="Tasks count per person"
-          />
-          <PersonSummary name="Leanne Graham" taskCount={1} />
-          <PersonSummary name="Ervin Howell" taskCount={1} />
-          <PersonSummary name="Clementine Bauch" taskCount={1} />
-        </div>
-=======
             return (
               <PersonSummary
                 key={user.id}
@@ -309,7 +224,6 @@ function App() {
         <p className="progress">
           {completedCount} of {totalCount} tasks completed
         </p>
->>>>>>> group-2
       </main>
     </div>
   );
