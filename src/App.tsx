@@ -50,7 +50,7 @@ function getOwnerName(userId: number): string {
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [showTasks, setShowTasks] = useState(true);
+  // const [showTasks, setShowTasks] = useState(true);
   const [name, setName] = useState("");
   const [showGreeting, setShowGreeting] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState(0);
@@ -74,6 +74,9 @@ function App() {
   function handleShowAllPeople() {
     setSelectedUserId(0);
   }
+  function handleShowPerson(userId: number) {
+    setSelectedUserId(userId);
+  }
 
   function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
@@ -82,7 +85,6 @@ function App() {
   function handleToggleGreeting() {
     setShowGreeting(!showGreeting);
   }
-
 
   let greetingMessage = "";
 
@@ -119,6 +121,17 @@ function App() {
 
     return matchesFilter && matchesSearch && matchesPerson;
   });
+  const peopleWithCounts = users
+    .map((user) => {
+      const taskCount = tasks.filter((task) => task.userId === user.id).length;
+
+      return {
+        id: user.id,
+        name: user.name,
+        taskCount: taskCount,
+      };
+    })
+    .filter((person) => person.taskCount > 0);
 
   const totalCount = tasks.length;
 
@@ -131,7 +144,6 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
-
 
   return (
     <div>
@@ -180,9 +192,6 @@ function App() {
             onChange={handleSearchChange}
           />
         </section>
-        <PersonSummary name="Ali Alhamwi" taskCount={3} />
-        <PersonSummary name="Majed Hmoud" taskCount={2} />
-        <PersonSummary name="Adham Albasha" taskCount={1} />
 
         <button
           className="toggle-greeting-button"
@@ -212,27 +221,16 @@ function App() {
           subtitle="Everything on your plate right now."
         />
 
-
         <SectionTitle title="Task List" subtitle="Keep track of your tasks" />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
-              />
-            );
-          })}
+          {peopleWithCounts.map((person) => (
+            <PersonSummary
+              key={person.id}
+              name={person.name}
+              taskCount={person.taskCount}
+            />
+          ))}
         </section>
 
         <section className="filters">
@@ -245,29 +243,39 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
+          {peopleWithCounts.map((person) => (
+            <button
+              key={person.id}
+              className={
+                "filter-button" +
+                (selectedUserId === person.id ? " active" : "")
+              }
+              onClick={() => handleShowPerson(person.id)}
+            >
+              {person.name} ({person.taskCount})
             </button>
           ))}
         </section>
+        {visibleTasks.length === 0 ? (
+          <p className="empty-state">No tasks to show.</p>
+        ) : (
+          <ul className="task-list">
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
 
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
-
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })}
+          </ul>
+        )}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
