@@ -1,26 +1,58 @@
-import  { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import { SectionTitle } from "./components/SectionTitle";
 import { PersonSummary } from "./components/PersonSummary";
 
+interface Task {
+  id: number;
+  userId: number;
+  title: string;
+  completed: boolean;
+}
+
+interface User {
+  id: number;
+  name: string;
+}
+
+type FilterStatus = "all" | "completed" | "pending";
+
+const tasks: Task[] = [
+  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
+  { id: 2, userId: 2, title: "Review pull request", completed: true },
+  { id: 3, userId: 3, title: "Write session notes", completed: false },
+  { id: 4, userId: 1, title: "Update project README", completed: true },
+  { id: 5, userId: 2, title: "Fix search bug", completed: false },
+  { id: 6, userId: 3, title: "Plan sprint review", completed: true },
+];
+
+const users: User[] = [
+  { id: 1, name: "Leanne Graham" },
+  { id: 2, name: "Ervin Howell" },
+  { id: 3, name: "Clementine Bauch" },
+];
+
+function getOwnerName(userId: number): string {
+  const user = users.find(function (user) {
+    return user.id === userId;
+  });
+
+  if (user) {
+    return user.name;
+  }
+
+  return "Unknown person";
+}
+
 function App() {
-  const [currentFilter, setCurrentFilter] = useState("all");
+  const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [showTasks, setShowTasks] = useState(true);
-  const [name, setName] = useState("");
-  const [showGreetingSection, setShowGreetingSection] = useState(true);
+  const [selectedUserId, setSelectedUserId] = useState(0);
 
-  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.target.value);
-  }
-
-  function handleToggleGreetingSection() {
-    setShowGreetingSection(!showGreetingSection);
-  }
-
-  function handleShowAll(): void {
+  function handleShowAll() {
     setCurrentFilter("all");
   }
 
@@ -36,51 +68,99 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function handleToggleTasks() {
-    setShowTasks(!showTasks);
+  function handleShowAllPeople() {
+    setSelectedUserId(0);
   }
 
-  // حساب رسالة التحية المشروطة بشكل مركزي قبل الـ return
-  let greetingMessage = "";
-  if (name === "") {
-    greetingMessage = "";
-  } else if (name === "admin") {
-    greetingMessage = "Welcome back, admin.";
-  } else {
-    greetingMessage = "Hello, " + name + "!";
+  function handleSelectUser(userId: number) {
+    setSelectedUserId(userId);
   }
+
+  const search = searchText.toLowerCase();
+
+  const visibleTasks = tasks.filter((task) => {
+    let matchesFilter = false;
+
+    if (currentFilter === "all") {
+      matchesFilter = true;
+    } else if (currentFilter === "completed" && task.completed) {
+      matchesFilter = true;
+    } else if (currentFilter === "pending" && !task.completed) {
+      matchesFilter = true;
+    }
+
+    const title = task.title.toLowerCase();
+    const matchesSearch = title.includes(search);
+
+    let matchesPerson = false;
+
+    if (selectedUserId === 0) {
+      matchesPerson = true;
+    } else if (task.userId === selectedUserId) {
+      matchesPerson = true;
+    }
+
+    return matchesFilter && matchesSearch && matchesPerson;
+  });
+
+  const peopleWithCounts = users
+    .map(function (user) {
+      const count = tasks.filter(function (task) {
+        return task.userId === user.id;
+      }).length;
+      return {
+        user: user,
+        count: count,
+      };
+    })
+    .filter(function (item) {
+      return item.count > 0;
+    });
+
+  const totalCount = tasks.length;
+
+  const completedCount = tasks.reduce(function (count, task) {
+    if (task.completed) {
+      return count + 1;
+    }
+
+    return count;
+  }, 0);
+
+  const pendingCount = totalCount - completedCount;
 
   return (
     <div>
       <Header />
-      <div className="person-summaries">
-        <PersonSummary name="Alice" taskCount={3} />
-        <PersonSummary name="Bob" taskCount={5} />
-        <PersonSummary name="Charlie" taskCount={2} />
-      </div>
 
       <main className="container">
         <section className="stats">
-          <StatCard label="Total Tasks" value={3} />
-          <StatCard label="Completed" value={1} />
-          <StatCard label="Pending" value={2} />
+          <StatCard label="Total Tasks" value={totalCount} />
+          <StatCard label="Completed" value={completedCount} />
+          <StatCard label="Pending" value={pendingCount} />
         </section>
 
         <section className="filters">
           <button
-            className={`filter-button ${currentFilter === "all" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "all" ? " active" : "")
+            }
             onClick={handleShowAll}
           >
             All
           </button>
           <button
-            className={`filter-button ${currentFilter === "completed" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "completed" ? " active" : "")
+            }
             onClick={handleShowCompleted}
           >
             Completed
           </button>
           <button
-            className={`filter-button ${currentFilter === "pending" ? "active" : ""}`}
+            className={
+              "filter-button" + (currentFilter === "pending" ? " active" : "")
+            }
             onClick={handleShowPending}
           >
             Pending
@@ -95,64 +175,73 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
-
-          {searchText ? (
-            <p className="search-feedback">Searching for: {searchText}</p>
-          ) : null}
         </section>
-
-        <button className="toggle-tasks-button" onClick={handleToggleTasks}>
-          {showTasks ? "Hide Tasks" : "Show Tasks"}
-        </button>
 
         <SectionTitle
           title="Your Tasks"
-          subtitle="Manage what you need to do tonight"
+          subtitle="Everything on your plate right now."
         />
 
-        {/* زر وميزة الإخفاء والإظهار لقسم التحية */}
-        <button onClick={handleToggleGreetingSection}>
-          {showGreetingSection
-            ? "Hide Greeting Feature"
-            : "Show Greeting Feature"}
-        </button>
-
-        {showGreetingSection ? (
-          <div style={{ marginTop: "10px", marginBottom: "20px" }}>
-            <input
-              type="text"
-              value={name}
-              onChange={handleNameChange}
-              placeholder="Enter your name"
+        <section className="people-summary">
+          {peopleWithCounts.map((item) => (
+            <PersonSummary
+              key={item.user.id}
+              name={item.user.name}
+              taskCount={item.count}
             />
-            {name !== "" ? <p>{greetingMessage}</p> : null}
-          </div>
-        ) : null}
+          ))}
+        </section>
 
-        {showTasks ? (
+        <section className="filters">
+          <button
+            className={
+              "filter-button" + (selectedUserId === 0 ? " active" : "")
+            }
+            onClick={handleShowAllPeople}
+          >
+            All people
+          </button>
+
+          {users.map((user) => (
+            <button
+              key={user.id}
+              className={
+                "filter-button" + (selectedUserId === user.id ? " active" : "")
+              }
+              onClick={() => handleSelectUser(user.id)}
+            >
+              {user.name}
+            </button>
+          ))}
+        </section>
+
+        {visibleTasks.length === 0 ? (
+          <p className="empty-state">No tasks to show.</p>
+        ) : (
           <ul className="task-list">
-            <TaskItem
-              title="Finish JavaScript exercise"
-              ownerName="Leanne Graham"
-              statusText="Pending"
-              statusClass="pending"
-            />
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
 
-            <TaskItem
-              title="Review pull request"
-              ownerName="Ervin Howell"
-              statusText="Completed"
-              statusClass="completed"
-            />
-
-            <TaskItem
-              title="Write session notes"
-              ownerName="Clementine Bauch"
-              statusText="Pending"
-              statusClass="pending"
-            />
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })}
           </ul>
-        ) : null}
+        )}
+
+        <p className="visible-count">
+          {visibleTasks.length} of {tasks.length} tasks shown
+        </p>
+        <p className="progress">
+          {completedCount} of {totalCount} tasks completed
+        </p>
       </main>
     </div>
   );
