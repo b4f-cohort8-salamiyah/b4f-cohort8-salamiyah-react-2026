@@ -3,14 +3,12 @@ import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
+import PersonSummary from "./components/PersonSummary";
 
 function App() {
-  // const currentFilter = "all";
   const [currentFilter, setCurrentFilter] = useState("pending");
   const [searchText, setSearchText] = useState("");
-  const [writeName, setWriteName] = useState("");
-
-  const [showTasks] = useState(true);
+  const [showTasks, setShowTasks] = useState(true);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -27,14 +25,33 @@ function App() {
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
   }
-  function handleWriteName(event: ChangeEvent<HTMLInputElement>) {
-    setWriteName(event.target.value);
+
+  function handleShowTasks() {
+    setShowTasks(!showTasks);
   }
 
 
-  // function handleShowTasks() {
-  //   setShowTasks(!showTasks);
-  // }
+  {/* Solution Here*/ }
+  
+  const [showMessage, setShowMessage] = useState(true);
+  function handleShowMessage() {
+      setShowMessage(!showMessage);
+    }
+
+
+  function handleGreetingMessage(event: ChangeEvent<HTMLInputElement>) {
+    greetingMessage(event.target.value);
+  }
+
+  const [Name, greetingMessage] = useState("");
+  let Message = "";
+  if (Name === "") {
+    Message = "";
+  } else if (Name === "admin") {
+    Message = "Welcome back, admin.";
+  } else {
+    Message = "Hello, " + Name + "!";
+  }
 
   return (
     <div>
@@ -78,31 +95,45 @@ function App() {
             <p className="search-feedback">Searching for: {searchText}</p>
           ) : null}
         </section>
+        <button
+          className="filter-button"
+          style={{ marginTop: "10px" }}
+          onClick={handleShowTasks}
+        >
+          {showTasks ? " HideTask" : "Show Task"}{" "}
+        </button>
 
-        {/* PART B — Session 06 */}
+        {/* Solution Here*/}
         <section>
           <input
             type="text"
             className="search-input"
             placeholder="Write Your Name ..."
-            value={writeName}
-            style={{ marginTop: "20px" }}
-            onChange={handleWriteName}
+            value={Name}
+            style={{ marginTop: "10px" }}
+            onChange={handleGreetingMessage}
           />
 
-          {writeName !== "" ? (
-            <p className="search-feedback"> Hello {writeName}</p>
+          {showMessage ? (
+            <div>
+              {Name !== "" ? (
+                <p className="search-feedback"> {Message}</p>
+              ) : null}
+            </div>
           ) : null}
         </section>
-        {/*PART A — Session 05  */}
-        <SectionTitle title="Your Tasks" />
-        <ul className="task-list" />
-        <TaskItem
-          title="Finish JavaScript exercise"
-          ownerName="Leanne Graham"
-          statusText="Pending"
-          statusClass="pending"
-        />
+
+        <button
+          className="filter-button"
+          style={{ marginTop: "10px" }}
+          onClick={handleShowMessage}
+        >
+          {showMessage ? " Hide Message" : "Show Message"}{" "}
+        </button>
+
+        {/* Solution Here  */}
+        <SectionTitle title="Your Tasks" subtitle="Great Job" />
+
         {showTasks ? (
           <ul className="task-list">
             <TaskItem
@@ -125,8 +156,30 @@ function App() {
               statusText="Pending"
               statusClass="pending"
             />
+            <TaskItem
+              title="Do Sport"
+              ownerName="Clementine Bauch"
+              statusText="Pending"
+              statusClass="pending"
+            />
+
+            <TaskItem
+              title="Go Shopping"
+              ownerName="Milla Bauch"
+              statusText="Complated"
+              statusClass="Complated"
+            />
           </ul>
         ) : null}
+
+        {/* Solution Here*/}
+        <section className="stats">
+          <PersonSummary name="Milla Bauch" taskCount={1} />
+
+          <PersonSummary name="Clementine Bauch" taskCount={2} />
+
+          <PersonSummary name="Leanne Graham" taskCount={2} />
+        </section>
       </main>
     </div>
   );
