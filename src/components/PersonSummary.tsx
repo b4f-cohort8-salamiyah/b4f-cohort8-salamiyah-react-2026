@@ -5,10 +5,11 @@ interface PersonSummaryProps {
 
 function PersonSummary(props: PersonSummaryProps) {
   return (
-    <p className="person-summary">
-      {props.name} - {props.taskCount} tasks
-    </p>
+    <p style={{marginTop:"10px",paddingLeft:"10px",
+    backgroundColor:"white",borderRadius:"5px"}}>
+      {props.name} has {props.taskCount} task</p>
   );
 }
+
 
 export default PersonSummary;
