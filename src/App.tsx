@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ChangeEvent } from "react";
 import Header from "./components/Header";
+import PersonSummary from "./components/PersonSummary";
+import SectionTitle from "./components/SectionTitle";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
@@ -46,6 +48,21 @@ function getOwnerName(userId: number): string {
 
   return "Unknown person";
 }
+
+type TaskStatus = "completed" | "pending";
+
+interface Task {
+  id: number;
+  title: string;
+  ownerName: string;
+  status: TaskStatus;
+}
+
+const taskList: Task[] = [
+  { id: 1, title: "Finish JavaScript exercise", ownerName: "Leanne Graham", status: "pending" },
+  { id: 2, title: "Review pull request", ownerName: "Ervin Howell", status: "completed" },
+  { id: 3, title: "Write session notes", ownerName: "Clementine Bauch", status: "pending" },
+];
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
@@ -168,6 +185,9 @@ function App() {
             value={searchText}
             onChange={handleSearchChange}
           />
+          <p className="search-feedback">
+            Showing {filteredTasks.length} of {totalTasks} tasks
+          </p>
         </section>
 
         <SectionTitle

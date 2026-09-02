@@ -109,7 +109,8 @@ body {
   width: 100%;
 }
 
-.search-input:focus {
+.search-input:focus,
+.greeting-input:focus {
   border-color: #3b6ef5;
   outline: none;
 }
