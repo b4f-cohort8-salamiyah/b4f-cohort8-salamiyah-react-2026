@@ -203,7 +203,6 @@ body {
   border-color: #3b6ef5;
 }
 
-
 .name-input-section {
   margin-top: 15px;
 }
@@ -216,23 +215,52 @@ body {
   width: 100%;
 }
 
-.name-input:focus {
+.name-input:focus .search-input:focus {
   border-color: #3b6ef5;
   outline: none;
 }
 
+/* ---------- Derived counts / progress ---------- */
 
-.toggle-greeting-button{
+.visible-count {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 15px;
+}
 
-background-color: #ffffff;
+.progress {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
+/* تنسيق زر إظهار وإخفاء المهام (لأنه لا يملك كلاس) */
+.filters button:not([class]) {
+  background-color: #ffffff;
   border: 1px solid #e2e5ea;
   border-radius: 8px;
   color: #1f2430;
   cursor: pointer;
   font-size: 15px;
   padding: 10px 18px;
-  margin-top: 15px;
 }
-.toggle-greeting-button:hover {
+
+.filters button:not([class]):hover {
   border-color: #3b6ef5;
+}
+
+.toggle-greeting-button {
+  background-color: #3b6ef5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.toggle-greeting-button:hover {
+  background-color: #2a56cf;
 }
