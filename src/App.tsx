@@ -35,7 +35,7 @@ function App() {
 
   function handleToggleTasks() {
     setShowTasks(!showTasks);
-    
+  
   }
 
   function handleToggleGreeting() {
