@@ -146,7 +146,7 @@ function App() {
             />
           </ul>
         ) : null}
-        <div>
+        <div className="personSamary">
           <SectionTitle
             title="Assignees Summary"
             subtitle="Tasks count per person"

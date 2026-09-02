@@ -4,7 +4,13 @@ interface personSummrayProps {
 }
 function personSummray(props: personSummrayProps) {
   return (
-    <div style={{ padding: "5px 0", borderBottom: "1px solid #eee" }}>
+    <div
+      style={{
+        padding: "5px 0",
+        borderBottom: "1px solid #eee",
+        marginTop: "10px",
+      }}
+    >
       <strong>{props.name}</strong> has {props.taskCount} tasks.
     </div>
   );
