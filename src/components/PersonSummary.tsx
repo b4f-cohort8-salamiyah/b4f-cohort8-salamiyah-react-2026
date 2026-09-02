@@ -6,7 +6,7 @@ interface PersonSummaryProps {
 function PersonSummary(props: PersonSummaryProps) {
   return (
     <p className="person-summary">
-      {props.name} --- {props.taskCount}
+      {props.name} - {props.taskCount} tasks
     </p>
   );
 }
