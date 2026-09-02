@@ -5,7 +5,7 @@ interface SectionTitleProps {
 
 function SectionTitle(props: SectionTitleProps) {
   return (
-    <div>
+    <div className="section-title">
       <h2>{props.title}</h2>
       <p>{props.subtitle}</p>
     </div>
