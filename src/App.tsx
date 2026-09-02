@@ -78,6 +78,15 @@ function App() {
 
   const search = searchText.toLowerCase();
 
+  const peopleWithCounts = users
+    .map((user) => {
+      const personTaskCount = tasks.filter(
+        (task) => task.userId === user.id,
+      ).length;
+      return { ...user, taskCount: personTaskCount };
+    })
+    .filter((person) => person.taskCount > 0);
+
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
 
@@ -166,20 +175,12 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
+          {peopleWithCounts.map((user) => {
             return (
               <PersonSummary
                 key={user.id}
                 name={user.name}
-                taskCount={personTaskCount}
+                taskCount={user.taskCount}
               />
             );
           })}
@@ -194,14 +195,14 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
+          {peopleWithCounts.map((user) => (
             <button
               key={user.id}
               className={
                 "filter-button" + (selectedUserId === user.id ? " active" : "")
               }
               onClick={() => handleUserId(user.id)}>
-              {user.name}
+              {user.name} ({user.taskCount})
             </button>
           ))}
         </section>
@@ -222,6 +223,11 @@ function App() {
             );
           })}
         </ul>
+        <p
+          style={{ color: "#6b7280", textAlign: "center" }}
+          className={visibleTasks.length == 0 ? " " : "empty-state"}>
+          No tasks found.
+        </p>
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
