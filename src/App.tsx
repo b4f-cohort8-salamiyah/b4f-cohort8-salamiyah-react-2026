@@ -52,6 +52,10 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
 
+  function handleUserId(userId: number) {
+    setSelectedUserId(userId);
+  }
+
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -127,24 +131,21 @@ function App() {
             className={
               "filter-button" + (currentFilter === "all" ? " active" : "")
             }
-            onClick={handleShowAll}
-          >
+            onClick={handleShowAll}>
             All
           </button>
           <button
             className={
               "filter-button" + (currentFilter === "completed" ? " active" : "")
             }
-            onClick={handleShowCompleted}
-          >
+            onClick={handleShowCompleted}>
             Completed
           </button>
           <button
             className={
               "filter-button" + (currentFilter === "pending" ? " active" : "")
             }
-            onClick={handleShowPending}
-          >
+            onClick={handleShowPending}>
             Pending
           </button>
         </section>
@@ -189,13 +190,17 @@ function App() {
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
             }
-            onClick={handleShowAllPeople}
-          >
+            onClick={handleShowAllPeople}>
             All people
           </button>
 
           {users.map((user) => (
-            <button key={user.id} className="filter-button">
+            <button
+              key={user.id}
+              className={
+                "filter-button" + (selectedUserId === user.id ? " active" : "")
+              }
+              onClick={() => handleUserId(user.id)}>
               {user.name}
             </button>
           ))}
