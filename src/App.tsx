@@ -51,13 +51,23 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+  const [name, setName] = useState("");
+  const [showGreeting, setShowGreeting] = useState(false);
 
   function handleShowAll() {
     setCurrentFilter("all");
   }
 
+  function handlePersonButton(personId: number) {
+    setSelectedUserId(personId);
+  }
+
   function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
+  }
+
+  function handleToggleGreeting() {
+    setShowGreeting((isVisible) => !isVisible);
   }
 
   function handleShowCompleted() {
@@ -77,6 +87,17 @@ function App() {
   }
 
   const search = searchText.toLowerCase();
+
+  const peopleWithTaskCounts = users
+    .map((user) => {
+      const taskCount = tasks.filter((task) => task.userId === user.id).length;
+
+      return {
+        ...user,
+        taskCount,
+      };
+    })
+    .filter((user) => user.taskCount > 0);
 
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
@@ -114,6 +135,7 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
+  const greetingMessage = `Hello, ${name}!`;
 
   return (
     <div>
@@ -186,23 +208,13 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
-              />
-            );
-          })}
+          {peopleWithTaskCounts.map((user) => (
+            <PersonSummary
+              key={user.id}
+              name={user.name}
+              taskCount={user.taskCount}
+            />
+          ))}
         </section>
 
         <section className="filters">
@@ -215,29 +227,39 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
+          {peopleWithTaskCounts.map((user) => (
+            <button
+              key={user.id}
+              className={
+                "filter-button" + (selectedUserId === user.id ? " active" : "")
+              }
+              onClick={() => handlePersonButton(user.id)}
+            >
+              {user.name} ({user.taskCount})
             </button>
           ))}
         </section>
 
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
+        {visibleTasks.length === 0 ? (
+          <p className="empty-state">No tasks to show.</p>
+        ) : (
+          <ul className="task-list">
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
 
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })}
+          </ul>
+        )}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
