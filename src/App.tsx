@@ -27,6 +27,7 @@ const tasks: Task[] = [
   { id: 4, userId: 1, title: "Update project README", completed: true },
   { id: 5, userId: 2, title: "Fix search bug", completed: false },
   { id: 6, userId: 3, title: "Plan sprint review", completed: true },
+  { id: 7, userId: 1, title: "Prepare presentation", completed: false },
 ];
 
 const users: User[] = [
@@ -90,6 +91,10 @@ function App() {
     greetingMessage = "Hello, " + name + "!";
   }
 
+  function handleUserFilter(userId: number) {
+    setSelectedUserId(userId);
+  }
+
   const search = searchText.toLowerCase();
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
@@ -123,6 +128,19 @@ function App() {
   }, 0);
   const pendingCount = totalCount - completedCount;
 
+  const activePeopleSummary = users
+    .map((user) => {
+      const taskCount = tasks.filter((task) => task.userId === user.id).length;
+      return {
+        id: user.id,
+        name: user.name,
+        taskCount: taskCount,
+      };
+    })
+    .filter((e) => {
+      return e.taskCount > 0;
+    });
+
   return (
     <div>
       <Header />
@@ -132,7 +150,6 @@ function App() {
           <StatCard label="Completed" value={completedCount} />
           <StatCard label="Pending" value={pendingCount} />
         </section>
-
         <section className="filters">
           <button onClick={() => setShowTasks(!showTasks)}>
             {showTasks ? "Hide Tasks" : "Show Tasks"}
@@ -160,7 +177,6 @@ function App() {
             Pending
           </button>
         </section>
-
         <section className="search">
           <input
             type="text"
@@ -170,16 +186,13 @@ function App() {
             onChange={handleSearchChange}
           />
         </section>
-
         <SectionTitle
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
-
         <button className="toggle-greeting-button" onClick={handelShowGreeting}>
           {showGreeting ? "Hide Greeting Section" : "Show Greeting Section"}
         </button>
-
         {showGreeting ? (
           <div className="name-input-section">
             <input
@@ -192,7 +205,13 @@ function App() {
             {name !== "" ? <p>{greetingMessage}</p> : null}
           </div>
         ) : null}
-
+        {activePeopleSummary.map((user) => (
+          <PersonSummary
+            key={user.id}
+            name={user.name}
+            taskCount={user.taskCount}
+          />
+        ))}
         <section className="filters">
           <button
             className={
@@ -201,28 +220,39 @@ function App() {
             onClick={handleShowAllPeople}>
             All people
           </button>
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
+
+          {activePeopleSummary.map((user) => (
+            <button
+              key={user.id}
+              className={
+                "filter-button" + (selectedUserId === user.id ? " active" : "")
+              }
+              onClick={() => handleUserFilter(user.id)}>
+              {user.name} ({user.taskCount})
             </button>
           ))}
         </section>
-
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
+        {showTasks ? (
+          visibleTasks.length == 0 ? (
+            <p className="empty-state">No tasks to show.</p>
+          ) : (
+            <ul className="task-list">
+              {visibleTasks.map((task) => {
+                const statusText = task.completed ? "Completed" : "Pending";
+                const statusClass = task.completed ? "completed" : "pending";
+                return (
+                  <TaskItem
+                    key={task.id}
+                    title={task.title}
+                    ownerName={getOwnerName(task.userId)}
+                    statusText={statusText}
+                    statusClass={statusClass}
+                  />
+                );
+              })}
+            </ul>
+          )
+        ) : null}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown

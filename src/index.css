@@ -264,3 +264,10 @@ body {
 .toggle-greeting-button:hover {
   background-color: #2a56cf;
 }
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+  margin-top: 30px;
+}
