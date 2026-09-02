@@ -6,8 +6,8 @@ interface SectionTitleProps {
 function SectionTitle(props: SectionTitleProps) {
   return (
     <div className="section-title">
-      <h4 className="section-title">{props.title}</h4>
-      <p className="section-title">{props.subtitle}</p>
+      <h2>{props.title}</h2>
+      <p>{props.subtitle}</p>
     </div>
   );
 }
