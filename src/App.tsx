@@ -71,6 +71,9 @@ function App() {
   function handleShowAllPeople() {
     setSelectedUserId(0);
   }
+  function handleUserFilter(userId: number) {
+    setSelectedUserId(userId);
+  }
 
   const search = searchText.toLowerCase();
 
@@ -110,6 +113,13 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
+ const usersWithTaskCounts = users
+  .map((user) => ({
+    id: user.id,
+    name: user.name,
+    count: tasks.filter((task) => task.userId === user.id).length,
+  }))
+  .filter((user) => user.count > 0);
 
   return (
     <div>
@@ -165,24 +175,10 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
-              />
-            );
-          })}
-        </section>
+  {usersWithTaskCounts.map((user) => (
+    <PersonSummary key={user.id} name={user.name} taskCount={user.count} />
+  ))}
+</section>
 
         <section className="filters">
           <button
@@ -194,29 +190,39 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
-            </button>
-          ))}
+          {usersWithTaskCounts.map((user) => (
+         <button
+         key={user.id}
+         className={"filter-button" + (selectedUserId === user.id ? " active" : "")}
+         onClick={() => handleUserFilter(user.id)}
+         >
+           {user.name} ({user.count})
+        </button>
+))}
         </section>
 
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
-
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
+       {visibleTasks.length === 0 ? (
+  <div className="empty-state">No tasks to show.</div>
+) : (
+  <ul className="task-list">
+    {visibleTasks.map((task) => {
+      const statusText = task.completed ? "Completed" : "Pending";
+      const statusClass = task.completed ? "completed" : "pending";
+      return (
+        <TaskItem
+          key={task.id}
+          title={task.title}
+          ownerName={getOwnerName(task.userId)}
+          statusText={statusText}
+          statusClass={statusClass}
+        />
+      );
+    })}
+  </ul>
+)}
+           
+        
+      
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
@@ -230,3 +236,11 @@ function App() {
 }
 
 export default App;
+
+
+//What would have to change about tasks for a button to actually mark a task as completed?
+
+/*We need to make tasks a
+ state variable with useState, 
+ so that clicking a button can update the completed property of a task 
+*/ 
