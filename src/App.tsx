@@ -3,29 +3,29 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import { ChangeEvent, useState } from "react";
-import PersonSummary from "./components/PersonSummary";
+// import PersonSummary from "./components/PersonSummary";
 
 function App() {
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
 
-  const [showGreeting, setShowGreeting] = useState(true);
+  // const [showGreeting, setShowGreeting] = useState(true);
 
-  function handelNameChange(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.target.value);
-  }
+  // function handelNameChange(event: ChangeEvent<HTMLInputElement>) {
+  //   setName(event.target.value);
+  // }
 
-  function handleToggleGreeting() {
-    setShowGreeting(!showGreeting);
-  }
+  // function handleToggleGreeting() {
+  //   setShowGreeting(!showGreeting);
+  // }
 
-  let greetingMessage = "";
-  if (name === "") {
-    greetingMessage = "";
-  } else if (name === "admin") {
-    greetingMessage = "Welcome back, admin.";
-  } else {
-    greetingMessage = "Hello, " + name + "!";
-  }
+  // let greetingMessage = "";
+  // if (name === "") {
+  //   greetingMessage = "";
+  // } else if (name.toLocaleLowerCase() === "admin") {
+  //   greetingMessage = "Welcome back, admin.";
+  // } else {
+  //   greetingMessage = "Hello, " + name + "!";
+  // }
 
   return (
     <div>
@@ -75,15 +75,15 @@ function App() {
             statusClass="pending"
           />
         </ul>
-
+{/* 
         <PersonSummary name="molham" taskCount={0} />
-        <PersonSummary name="nawar" taskCount={100} />
+        <PersonSummary name="nawar" taskCount={100} /> */}
 
-        <button className="filter-button" onClick={handleToggleGreeting}>
+        {/* <button className="filter-button" onClick={handleToggleGreeting}>
           {showGreeting ? "Hide Greeting" : "Show Greeting"}
-        </button>
+        </button> */}
 
-        {showGreeting && (
+        {/* {showGreeting && (
           <>
             <input
               className="search-input"
@@ -94,7 +94,7 @@ function App() {
             />
             {name !== "" ? <p>{greetingMessage}</p> : null}
           </>
-        )}
+        )} */}
       </main>
     </div>
   );

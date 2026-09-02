@@ -4,10 +4,10 @@ interface PersonSummaryProps {
   taskCount: number;
 }
 
-function PersonSummary(props: PersonSummaryProps) {
+function PersonSummary(prop: PersonSummaryProps) {
   return (
     <div className="task-item">
-      {props.name} has {props.taskCount} tasks
+      {prop.name} has {prop.taskCount} tasks
     </div>
   );
 }
