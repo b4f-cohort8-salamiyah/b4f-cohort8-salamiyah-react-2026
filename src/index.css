@@ -114,6 +114,24 @@ body {
   outline: none;
 }
 
+/* ---------- Section title ---------- */
+
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 12px;
+}
+
+.section-title h2 {
+  font-size: 19px;
+  color: #1f2430;
+}
+
+.section-title p {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
 /* ---------- Task list ---------- */
 
 .task-list {
@@ -161,6 +179,51 @@ body {
   background-color: #e08b1a;
 }
 
+/* ---------- People summary ---------- */
+
+.people-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.person-summary {
+  color: #1f2430;
+  font-size: 14px;
+}
+
+/* ---------- Derived counts / progress ---------- */
+
+.visible-count {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.progress {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+/* ---------- Empty state ---------- */
+/* Instructor-provided styling for the homework's empty-result message.
+   Unused until that message's JSX is added (STRETCH homework); this
+   comment is not a hint about where/how to add it. */
+
+.empty-state {
+  color: #6b7280;
+  font-size: 15px;
+  margin-top: 20px;
+  text-align: center;
+}
+
 /* ---------- Small screens ---------- */
 
 @media (max-width: 600px) {
@@ -176,6 +239,7 @@ body {
     flex-wrap: wrap;
   }
 }
+<<<<<<< HEAD
 
 .search-input:focus {
   border-color: #3b6ef5;
@@ -244,3 +308,5 @@ name p {
 .toggle-greeting-button:hover {
   border-color: #3b6ef5;
 }
+=======
+>>>>>>> group-2
