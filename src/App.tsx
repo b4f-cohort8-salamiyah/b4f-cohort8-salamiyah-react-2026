@@ -72,6 +72,10 @@ function App() {
     setSelectedUserId(0);
   }
 
+  function handleShowPerson(userId: number) {
+    setSelectedUserId(userId);
+  }
+
   const search = searchText.toLowerCase();
 
   const visibleTasks = tasks.filter((task) => {
@@ -98,6 +102,20 @@ function App() {
 
     return matchesFilter && matchesSearch && matchesPerson;
   });
+
+  const peopleWithTaskCounts = users
+    .map((user) => {
+      const taskCount = tasks.filter(
+        (task) => task.userId === user.id,
+      ).length;
+
+      return {
+        id: user.id,
+        name: user.name,
+        taskCount: taskCount,
+      };
+    })
+    .filter((user) => user.taskCount > 0);
 
   const totalCount = tasks.length;
 
@@ -165,23 +183,13 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
-              />
-            );
-          })}
+          {peopleWithTaskCounts.map((user) => (
+            <PersonSummary
+              key={user.id}
+              name={user.name}
+              taskCount={user.taskCount}
+            />
+          ))}
         </section>
 
         <section className="filters">
@@ -194,29 +202,40 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
+          {peopleWithTaskCounts.map((user) => (
+            <button
+              key={user.id}
+              className={
+                "filter-button" +
+                (selectedUserId === user.id ? " active" : "")
+              }
+              onClick={() => handleShowPerson(user.id)}
+            >
+              {user.name} ({user.taskCount})
             </button>
           ))}
         </section>
 
-        <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
+        {visibleTasks.length === 0 ? (
+          <p className="empty-state">No tasks to show.</p>
+        ) : (
+          <ul className="task-list">
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
 
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
-        </ul>
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })}
+          </ul>
+        )}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
