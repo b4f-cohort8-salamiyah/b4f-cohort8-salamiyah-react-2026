@@ -21,11 +21,11 @@ interface User {
 type FilterStatus = "all" | "completed" | "pending";
 
 const tasks: Task[] = [
-  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
+  // { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
-  { id: 3, userId: 3, title: "Write session notes", completed: false },
+  // { id: 3, userId: 3, title: "Write session notes", completed: false },
   { id: 4, userId: 1, title: "Update project README", completed: true },
-  { id: 5, userId: 2, title: "Fix search bug", completed: false },
+  // { id: 5, userId: 2, title: "Fix search bug", completed: false },
   { id: 6, userId: 3, title: "Plan sprint review", completed: true },
 ];
 
@@ -47,11 +47,28 @@ function getOwnerName(userId: number): string {
   return "Unknown person";
 }
 
+const peopleWithCounts = users
+  .map((user) => {
+    const personTaskCount = tasks.filter(
+      (task) => task.userId === user.id,
+    ).length;
+
+    return {
+      id: user.id,
+      name: user.name,
+      taskCount: personTaskCount,
+    };
+  })
+  .filter((person) => person.taskCount > 0);
+
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
 
+  function updateSelectedUserId(id: number) {
+    setSelectedUserId(id);
+  }
   function handleShowAll() {
     setCurrentFilter("all");
   }
@@ -165,23 +182,13 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
-            return (
-              <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
-              />
-            );
-          })}
+          {peopleWithCounts.map((person) => (
+            <PersonSummary
+              key={person.id}
+              name={person.name}
+              taskCount={person.taskCount}
+            />
+          ))}
         </section>
 
         <section className="filters">
@@ -194,28 +201,41 @@ function App() {
             All people
           </button>
 
-          {users.map((user) => (
-            <button key={user.id} className="filter-button">
-              {user.name}
+          {peopleWithCounts.map((person) => (
+            <button
+              key={person.id}
+              className={
+                "filter-button" +
+                (selectedUserId === person.id ? " active" : "")
+              }
+              onClick={() => updateSelectedUserId(person.id)}
+            >
+              {person.name} ({person.taskCount})
             </button>
           ))}
         </section>
 
         <ul className="task-list">
-          {visibleTasks.map((task) => {
-            const statusText = task.completed ? "Completed" : "Pending";
-            const statusClass = task.completed ? "completed" : "pending";
+          {visibleTasks && visibleTasks.length > 0 ? (
+            visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
 
-            return (
-              <TaskItem
-                key={task.id}
-                title={task.title}
-                ownerName={getOwnerName(task.userId)}
-                statusText={statusText}
-                statusClass={statusClass}
-              />
-            );
-          })}
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })
+          ) : (
+            <li>
+              <p className="empty-state">No tasks to show</p>
+            </li>
+          )}
         </ul>
 
         <p className="visible-count">
