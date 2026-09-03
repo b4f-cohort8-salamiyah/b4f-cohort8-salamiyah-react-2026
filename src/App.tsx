@@ -124,9 +124,9 @@ function App() {
         </section>
 
         <section className="person-summaries">
-              <PersonSummary name="Leanne Graham" taskCount={2} />
+              <PersonSummary name="Leanne Graham" taskCount={1} />
               <PersonSummary name="Clementine Bauch" taskCount={1} />
-              <PersonSummary name="Patricia Lebsack" taskCount={0} />
+              <PersonSummary name="Patricia Lebsack" taskCount={1} />
             </section>
           </div>
         ) :null}
