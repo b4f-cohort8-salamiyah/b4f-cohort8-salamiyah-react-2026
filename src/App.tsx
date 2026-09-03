@@ -5,6 +5,7 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -20,7 +21,7 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
@@ -51,6 +52,7 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+  const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -118,6 +120,18 @@ function App() {
     })
     .filter((entry) => entry.count > 0);
 
+  function addNewTask(title: string, userId: number): void {
+    const draftTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, draftTask];
+    setTasks(newTasks);
+  }
+
   return (
     <div>
       <Header />
@@ -155,6 +169,8 @@ function App() {
             Pending
           </button>
         </section>
+
+        <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
 
         <section className="search">
           <input
