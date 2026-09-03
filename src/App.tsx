@@ -5,6 +5,7 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -20,7 +21,7 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
@@ -33,6 +34,34 @@ const users: User[] = [
   { id: 1, name: "Leanne Graham" },
   { id: 2, name: "Ervin Howell" },
   { id: 3, name: "Clementine Bauch" },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+  },
 ];
 
 function getOwnerName(userId: number): string {
@@ -51,6 +80,8 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+
+  const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -117,6 +148,19 @@ function App() {
       return { user, count };
     })
     .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const newTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, newTask];
+
+    setTasks(newTasks);
+  }
 
   return (
     <div>
@@ -203,6 +247,8 @@ function App() {
             </button>
           ))}
         </section>
+
+        <AddTask selectedUserId={0} users={users} addNewTask={addNewTask} />
 
         {visibleTasks.length === 0 ? (
           <p className="empty-state">No tasks to show.</p>
