@@ -12,9 +12,7 @@ function TaskItem(props: TaskItemProps) {
         <span className="task-title">{props.title}</span>
         <span className="task-user">{props.ownerName}</span>
       </span>
-      <span className={`task-status ${props.statusClass}`}>
-        {props.statusText}
-      </span>
+      <span className={`task-status ${props.statusClass}`}>{props.statusText}</span>
     </li>
   );
 }
