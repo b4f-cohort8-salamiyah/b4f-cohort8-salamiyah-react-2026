@@ -1,7 +1,5 @@
 /* ---------- Basic setup ---------- */
 
-/* Remove the spacing the browser adds by default,
-   and make width include padding and border. */
 * {
   margin: 0;
   padding: 0;
@@ -36,8 +34,6 @@ body {
 
 /* ---------- Page container ---------- */
 
-/* max-width keeps the page readable on big screens.
-   margin: 0 auto puts the container in the middle. */
 .container {
   max-width: 700px;
   margin: 0 auto;
@@ -46,13 +42,11 @@ body {
 
 /* ---------- Statistic cards ---------- */
 
-/* display: flex puts the cards next to each other in a row. */
 .stats {
   display: flex;
   gap: 16px;
 }
 
-/* flex: 1 means every card takes an equal share of the row. */
 .stat-card {
   flex: 1;
   background-color: #ffffff;
@@ -73,14 +67,6 @@ body {
   margin-top: 5px;
 }
 
-.stats {
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  min-width: 140px;
-}
-
 /* ---------- Filter buttons ---------- */
 
 .filters {
@@ -99,109 +85,17 @@ body {
   padding: 10px 18px;
 }
 
-/* Give the user feedback when the mouse is over a button. */
 .filter-button:hover {
   border-color: #3b6ef5;
 }
 
-/* The button of the filter that is currently selected. */
 .filter-button.active {
   background-color: #3b6ef5;
   border-color: #3b6ef5;
   color: #ffffff;
 }
 
-/* ---------- Task list ---------- */
-
-/* list-style: none removes the bullet points. */
-.task-list {
-  list-style: none;
-  margin-top: 20px;
-}
-
-/* justify-content: space-between pushes the title left
-   and the status right. */
-.task-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 10px;
-  padding: 15px 18px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.task-status {
-  border-radius: 20px;
-  color: #ffffff;
-  background-color: #6b7280;
-  font-size: 12px;
-  padding: 5px 12px;
-}
-
-/* Green for finished work, orange for work that is still open. */
-.task-status.completed {
-  background-color: #17a673;
-}
-
-.task-status.pending {
-  background-color: #e08b1a;
-}
-
-/* ---------- Small screens ---------- */
-
-/* On a narrow screen there is no room for three cards in one row,
-   so we turn the row into a column. */
-@media (max-width: 600px) {
-  .header h1 {
-    font-size: 26px;
-  }
-
-  .stats {
-    flex-direction: column;
-  }
-
-  .filters {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Each filter button takes a full row so it is easy to tap. */
-  .filter-button {
-    width: 100%;
-  }
-
-  /* The title and the status no longer fit side by side. */
-  /* .task-item {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  } */
-}
-
-.footer {
-  border-top: 1px solid #e2e5ea;
-  color: #6b7280;
-  font-size: 14px;
-  padding: 20px;
-  text-align: center;
-}
-
-.task-item:hover {
-  border-color: #3b6ef5;
-  cursor: pointer;
-}
-
-.progress {
-  color: #6b7280;
-  font-size: 14px;
-  margin-top: 15px;
-  text-align: center;
-}
+/* ---------- Search ---------- */
 
 .search {
   margin-top: 15px;
@@ -220,25 +114,42 @@ body {
   outline: none;
 }
 
-/* ---------- Messages ---------- */
+/* ---------- Section title ---------- */
 
-.message {
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 12px;
+}
+
+.section-title h2 {
+  font-size: 19px;
+  color: #1f2430;
+}
+
+.section-title p {
   color: #6b7280;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* ---------- Task list ---------- */
+
+.task-list {
+  list-style: none;
   margin-top: 20px;
-  text-align: center;
 }
 
-.message.error {
-  background-color: #fdeaea;
-  border: 1px solid #d64545;
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
   border-radius: 10px;
-  color: #d64545;
-  padding: 15px;
-}
-
-/* Anything with this class is not shown on the page. */
-.hidden {
-  display: none;
+  padding: 15px 18px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .task-text {
@@ -252,166 +163,79 @@ body {
   font-size: 12px;
 }
 
-.people {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 10px;
-  margin-top: 20px;
-  padding: 15px;
-}
-
-.people-title {
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.people-list {
-  list-style: none;
-}
-
-.person-line {
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-
-.person-button {
-  background-color: #f1f3f7;
-  border: 1px solid #e2e5ea;
-  border-radius: 6px;
-  color: #1f2430;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 6px 10px;
-  text-align: left;
-  width: 100%;
-}
-
-.person-button:hover {
-  border-color: #3b6ef5;
-}
-
-/* The chosen person, and "All people" while nobody is chosen. */
-.person-button.active {
-  background-color: #3b6ef5;
-  border-color: #3b6ef5;
+.task-status {
+  border-radius: 20px;
   color: #ffffff;
+  background-color: #6b7280;
+  font-size: 12px;
+  padding: 5px 12px;
 }
 
-#allPeopleButton {
-  margin-bottom: 10px;
+.task-status.completed {
+  background-color: #17a673;
 }
 
-.add-task-section {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 10px;
-  margin-top: 20px;
-  padding: 15px;
+.task-status.pending {
+  background-color: #e08b1a;
 }
 
-.add-task-title {
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
+/* ---------- People summary ---------- */
 
-.add-task-controls {
+.people-summary {
   display: flex;
-  gap: 10px;
-}
-
-.add-task-input,
-.add-task-select {
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  font-size: 15px;
-  padding: 10px 12px;
-}
-
-.add-task-input {
-  flex: 2;
-}
-
-.add-task-select {
-  flex: 1;
+  flex-direction: column;
+  gap: 6px;
   background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
 }
 
-.add-task-input:focus,
-.add-task-select:focus {
-  border-color: #3b6ef5;
-  outline: none;
+.person-summary {
+  color: #1f2430;
+  font-size: 14px;
 }
 
-.add-task-button {
-  background-color: #3b6ef5;
-  border: 1px solid #3b6ef5;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
+/* ---------- Derived counts / progress ---------- */
+
+.visible-count {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+.progress {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+/* ---------- Empty state ---------- */
+/* Instructor-provided styling for the homework's empty-result message.
+   Unused until that message's JSX is added (STRETCH homework); this
+   comment is not a hint about where/how to add it. */
+
+.empty-state {
+  color: #6b7280;
   font-size: 15px;
-  padding: 10px 18px;
+  margin-top: 20px;
+  text-align: center;
 }
 
-.add-task-button:hover {
-  background-color: #2f5bd6;
-}
+/* ---------- Small screens ---------- */
 
-/* Narrow screens: stack the Add Task controls instead of squeezing them
-   into one row. */
 @media (max-width: 600px) {
-  .add-task-controls {
+  .header h1 {
+    font-size: 26px;
+  }
+
+  .stats {
     flex-direction: column;
   }
-}
 
-.task-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.delete-task-button {
-  background-color: #fdeaea;
-  border: 1px solid #d64545;
-  border-radius: 8px;
-  color: #d64545;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 6px 12px;
-}
-
-.delete-task-button:hover {
-  background-color: #d64545;
-  color: #ffffff;
-}
-
-.edit-task-button {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  color: #1f2430;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 6px 12px;
-}
-
-.edit-task-button:hover {
-  border-color: #3b6ef5;
-}
-
-.toggle-tasks-button {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
-  border-radius: 8px;
-  color: #1f2430;
-  cursor: pointer;
-  font-size: 15px;
-  padding: 10px 18px;
-  margin-top: 15px;
-}
-.toggle-tasks-button:hover {
-  border-color: #3b6ef5;
+  .filters {
+    flex-wrap: wrap;
+  }
 }

@@ -1,14 +1,14 @@
-interface sectionTitleString {
+interface SectionTitleProps {
   title: string;
   subtitle: string;
 }
 
-function SectionTitle(prop: sectionTitleString) {
+function SectionTitle(props: SectionTitleProps) {
   return (
-    <h1 className="section-title">
-      {prop.title}
-      <h6 className="section-subtitle">{prop.subtitle}</h6>
-    </h1>
+    <div className="section-title">
+      <h2>{props.title}</h2>
+      <p>{props.subtitle}</p>
+    </div>
   );
 }
 
