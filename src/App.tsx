@@ -82,8 +82,8 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function handleShowAllPeople() {
-    setSelectedUserId(0);
+  function handleSelectedPerson(userId: number): void {
+    setSelectedUserId(userId);
   }
 
   const search = searchText.toLowerCase();
@@ -135,7 +135,13 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
-  const greetingMessage = `Hello, ${name}!`;
+
+  const peopleWithCount = users
+    .map((user) => {
+      const count = tasks.filter((task) => task.userId === user.id).length;
+      return { user, count };
+    })
+    .filter((entry) => entry.count > 0);
 
   return (
     <div>
@@ -208,13 +214,15 @@ function App() {
         />
 
         <section className="people-summary">
-          {peopleWithTaskCounts.map((user) => (
-            <PersonSummary
-              key={user.id}
-              name={user.name}
-              taskCount={user.taskCount}
-            />
-          ))}
+          {peopleWithCount.map((entry) => {
+            return (
+              <PersonSummary
+                key={entry.user.id}
+                name={entry.user.name}
+                taskCount={entry.count}
+              />
+            );
+          })}
         </section>
 
         <section className="filters">
@@ -222,20 +230,18 @@ function App() {
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
             }
-            onClick={handleShowAllPeople}
+            onClick={() => handleSelectedPerson(0)}
           >
             All people
           </button>
 
-          {peopleWithTaskCounts.map((user) => (
+          {peopleWithCount.map((entry) => (
             <button
-              key={user.id}
-              className={
-                "filter-button" + (selectedUserId === user.id ? " active" : "")
-              }
-              onClick={() => handlePersonButton(user.id)}
+              key={entry.user.id}
+              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
+              onClick={() => handleSelectedPerson(entry.user.id)}
             >
-              {user.name} ({user.taskCount})
+              {entry.user.name} - {entry.count}
             </button>
           ))}
         </section>
