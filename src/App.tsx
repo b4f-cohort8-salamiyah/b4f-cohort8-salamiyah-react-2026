@@ -132,6 +132,35 @@ function App() {
     setTasks(newTasks);
   }
 
+  function handleToggleTask(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleteTask(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
   return (
     <div>
       <Header />
@@ -227,10 +256,14 @@ function App() {
               return (
                 <TaskItem
                   key={task.id}
+                  id={task.id}
                   title={task.title}
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onToggle={handleToggleTask}
+                  onDelete={handleDeleteTask}
+                  onSaveEdit={handleSaveEdit}
                 />
               );
             })}
