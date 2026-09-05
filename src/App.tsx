@@ -80,7 +80,6 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
-
   const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
