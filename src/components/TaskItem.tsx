@@ -14,9 +14,11 @@ interface TaskItemProps {
 function TaskItem(props: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(props.title);
+  const [error, setError] = useState("");
 
   function handleEditClick() {
     setIsEditing(true);
+    setError("");
   }
 
   function handleEditChange(event: ChangeEvent<HTMLInputElement>) {
@@ -26,15 +28,23 @@ function TaskItem(props: TaskItemProps) {
   function handleSaveClick() {
     const newTitle = editTitle.trim();
     if (!newTitle) {
+      setError("Title can't be empty.");
       return;
     }
+    const MAX_TITLE_LENGTH = 200; 
+     if (newTitle.length > MAX_TITLE_LENGTH) {
+    setError("Title is too long ");
+    return;
+  }
 
     props.onSaveEdit(props.id, newTitle);
     setIsEditing(false);
+    setError("");
   }
 
   function handleCancelClick() {
     setIsEditing(false);
+    setError("");
   }
 
   if (isEditing) {
@@ -46,6 +56,7 @@ function TaskItem(props: TaskItemProps) {
           value={editTitle}
           onChange={handleEditChange}
         />
+        {error && <p className="form-error">{error}</p>}
         <span className="task-actions">
           <button
             className="task-action-button save-button"

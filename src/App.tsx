@@ -101,9 +101,7 @@ function App() {
   function handleSelectedPerson(userId: number): void {
     setSelectedUserId(userId);
   }
-  function handleUserFilter(userId: number) {
-    setSelectedUserId(userId);
-  }
+ 
 
   const search = searchText.toLowerCase();
 
@@ -143,13 +141,7 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
- const usersWithTaskCounts = users
-  .map((user) => ({
-    id: user.id,
-    name: user.name,
-    count: tasks.filter((task) => task.userId === user.id).length,
-  }))
-  .filter((user) => user.count > 0);
+
 
   const peopleWithCount = users
     .map((user) => {
@@ -191,6 +183,7 @@ function App() {
   function handleSaveEdit(id: number, newTitle: string): void {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
+
         return { ...task, title: newTitle };
       }
 
@@ -329,11 +322,3 @@ function App() {
 }
 
 export default App;
-
-
-//What would have to change about tasks for a button to actually mark a task as completed?
-
-/*We need to make tasks a
- state variable with useState, 
- so that clicking a button can update the completed property of a task 
-*/ 
