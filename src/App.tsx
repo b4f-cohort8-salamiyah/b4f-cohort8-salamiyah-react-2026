@@ -5,6 +5,10 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+<<<<<<< HEAD
+=======
+import AddTask from "./components/AddTask";
+>>>>>>> origin/group-1
 
 interface Task {
   id: number;
@@ -20,7 +24,11 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
+<<<<<<< HEAD
 const tasks: Task[] = [
+=======
+const initialTasks: Task[] = [
+>>>>>>> origin/group-1
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
@@ -51,6 +59,10 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+<<<<<<< HEAD
+=======
+  const [tasks, setTasks] = useState(initialTasks);
+>>>>>>> origin/group-1
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -68,8 +80,13 @@ function App() {
     setSearchText(event.target.value);
   }
 
+<<<<<<< HEAD
   function handleShowAllPeople() {
     setSelectedUserId(0);
+=======
+  function handleSelectedPerson(userId: number) {
+    setSelectedUserId(userId);
+>>>>>>> origin/group-1
   }
 
   const search = searchText.toLowerCase();
@@ -111,6 +128,28 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
+<<<<<<< HEAD
+=======
+  const peopleWithCount = users
+    .map((user) => {
+      const count = tasks.filter((task) => task.userId === user.id).length;
+      return { user, count };
+    })
+    .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const draftTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, draftTask];
+    setTasks(newTasks);
+  }
+
+>>>>>>> origin/group-1
   return (
     <div>
       <Header />
@@ -149,6 +188,8 @@ function App() {
           </button>
         </section>
 
+        <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
+
         <section className="search">
           <input
             type="text"
@@ -163,6 +204,7 @@ function App() {
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
+<<<<<<< HEAD
 
         <section className="people-summary">
           {users.map((user) => {
@@ -217,6 +259,60 @@ function App() {
             );
           })}
         </ul>
+=======
+
+        <section className="people-summary">
+          {peopleWithCount.map((entry) => (
+            <PersonSummary
+              key={entry.user.id}
+              name={entry.user.name}
+              taskCount={entry.count}
+            />
+          ))}
+        </section>
+
+        <section className="filters">
+          <button
+            className={
+              "filter-button" + (selectedUserId === 0 ? " active" : "")
+            }
+            onClick={() => handleSelectedPerson(0)}
+          >
+            All people
+          </button>
+
+          {peopleWithCount.map((entry) => (
+            <button
+              key={entry.user.id}
+              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
+              onClick={() => handleSelectedPerson(entry.user.id)}
+            >
+              {entry.user.name} - ({entry.count})
+            </button>
+          ))}
+        </section>
+
+        {visibleTasks.length > 0 ? (
+          <ul className="task-list">
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
+
+              return (
+                <TaskItem
+                  key={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                />
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="empty-state">No tasks to show.</p>
+        )}
+>>>>>>> origin/group-1
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
