@@ -132,22 +132,22 @@ function App() {
     setTasks(newTasks);
   }
 
-  function toggleTask(taskId: number): void {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task,
+  function handleToggleTask(id: number): void {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task,
       ),
     );
   }
 
-  function deleteTask(taskId: number): void {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  function handleDeleteTask(id: number): void {
+    setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
   }
 
-  function saveTaskEdit(taskId: number, title: string): void {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, title: title.trim() } : task,
+  function handleSaveEdit(id: number, title: string): void {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === id ? { ...task, title: title.trim() } : task,
       ),
     );
   }
@@ -252,9 +252,9 @@ function App() {
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
-                  onToggle={() => toggleTask(task.id)}
-                  onDelete={() => deleteTask(task.id)}
-                  onSaveEdit={(title) => saveTaskEdit(task.id, title)}
+                  onToggle={handleToggleTask}
+                  onDelete={handleDeleteTask}
+                  onSaveEdit={handleSaveEdit}
                 />
               );
             })}
