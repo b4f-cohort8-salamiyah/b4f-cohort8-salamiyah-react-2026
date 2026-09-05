@@ -11,11 +11,16 @@ interface TaskItemProps {
   onSaveEdit: (id: number, title: string) => void;
 }
 
+const MAX_TITLE_LENGTH = 200;
+
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleEditClick() {
+    setEditTitle(props.title);
+    setErrorMessage("");
     setIsEditing(true);
   }
 
@@ -25,18 +30,27 @@ function TaskItem(props: TaskItemProps) {
 
   function handleCancelClick() {
     setIsEditing(false);
+    setErrorMessage("");
   }
 
   function handleSaveClick() {
-    setIsEditing(false);
-
     const newTitle = editTitle.trim();
 
-    if (!newTitle) {
+    if (newTitle === "") {
+      setErrorMessage("Title can't be empty.");
+      return;
+    }
+
+    if (newTitle.length > MAX_TITLE_LENGTH) {
+      setErrorMessage(
+        `Title can't be longer than ${MAX_TITLE_LENGTH} characters.`,
+      );
       return;
     }
 
     props.onSaveEdit(props.id, newTitle);
+    setErrorMessage("");
+    setIsEditing(false);
   }
 
   if (isEditing) {
@@ -60,6 +74,7 @@ function TaskItem(props: TaskItemProps) {
             Cancel
           </button>
         </span>
+        {errorMessage && <p className="form-error">{errorMessage}</p>}
       </li>
     );
   }
