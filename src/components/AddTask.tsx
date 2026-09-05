@@ -14,6 +14,7 @@ interface AddTaskProps {
 function AddTask(props: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
+  const [error, setError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -25,10 +26,25 @@ function AddTask(props: AddTaskProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    props.addNewTask(draftTitle, draftUserId);
+    const trimmedTitle = draftTitle.trim();
 
+    if (trimmedTitle === "") {
+      setError("Title can't be empty.");
+      return;
+    }
+
+    if (trimmedTitle.length > 200) {
+      setError("Title can't be longer than 200 characters.");
+      return;
+    }
+    props.addNewTask(trimmedTitle, draftUserId);
+
+    setError("");
     setDraftTitle("");
     setDraftUserId(props.selectedUserId);
+
+    // setDraftTitle("");
+    // setDraftUserId(props.selectedUserId);
   }
 
   return (
@@ -40,6 +56,7 @@ function AddTask(props: AddTaskProps) {
         value={draftTitle}
         onChange={handleTitleChange}
       />
+      {error && <p className="form-error">{error}</p>}
 
       <select
         value={draftUserId}

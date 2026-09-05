@@ -295,43 +295,118 @@ body {
 
 .add-task-form {
   display: flex;
+  align-items: center;
   gap: 10px;
+  margin: 20px 0;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   flex-wrap: wrap;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .add-task-input {
   flex: 1;
   min-width: 180px;
-  border: 1px solid #e2e5ea;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 15px;
-  padding: 10px 14px;
+  padding: 10px 12px;
+  outline: none;
 }
 
 .add-task-input:focus {
-  border-color: #3b6ef5;
+  border-color: #3498db;
   outline: none;
 }
 
 .add-task-select {
-  background-color: #ffffff;
-  border: 1px solid #e2e5ea;
+  background-color: white;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 15px;
-  padding: 10px 14px;
+  padding: 10px 12px;
 }
 
 .add-task-button {
   background-color: #3b6ef5;
+  background: #3498db;
   border: none;
   border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
+  font-weight: 600;
   font-size: 15px;
-  padding: 10px 18px;
+  padding: 10px 16px;
 }
 
 .add-task-button:hover {
   background-color: #2f5cd6;
+  background: #2980b9;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-action-button {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.task-action-button:hover {
+  border-color: #3b6ef5;
+}
+
+.delete-button {
+  border-color: #f0d7d3;
+  color: #c0392b;
+}
+
+.delete-button:hover {
+  border-color: #c0392b;
+}
+
+.save-button {
+  background-color: #3b6ef5;
+  border-color: #3b6ef5;
+  color: #ffffff;
+}
+
+.save-button:hover {
+  background-color: #2f5cd6;
+}
+
+.edit-title-input {
+  border: 1px solid #3b6ef5;
+  border-radius: 6px;
+  flex: 1;
+  font-size: 14px;
+  padding: 6px 10px;
+}
+
+.form-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 8px;
+  width: 100%;
+}
+.people-filters {
+  margin-top: 15px;
+}
+
+.people-filters > .filter-button {
+  margin-bottom: 10px;
+}
+
+.people-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
