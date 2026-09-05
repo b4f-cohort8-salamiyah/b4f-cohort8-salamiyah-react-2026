@@ -14,6 +14,7 @@ interface AddTaskProps {
 function AddTask(props: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -25,7 +26,15 @@ function AddTask(props: AddTaskProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    props.addNewTask(draftTitle, draftUserId);
+
+    const trimmedTitle = draftTitle.trim();
+    if (trimmedTitle === "") {
+      setErrorMessage("Title cannot be empty.");
+      return;
+    }
+
+    props.addNewTask(trimmedTitle, draftUserId);
+    setErrorMessage("");
 
     setDraftTitle("");
     setDraftUserId(props.selectedUserId);
@@ -57,6 +66,7 @@ function AddTask(props: AddTaskProps) {
       <button type="submit" className="add-task-button">
         Add Task
       </button>
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
     </form>
   );
 }
