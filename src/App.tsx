@@ -5,6 +5,7 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -20,47 +21,66 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
   { id: 4, userId: 1, title: "Update project README", completed: true },
   { id: 5, userId: 2, title: "Fix search bug", completed: false },
   { id: 6, userId: 3, title: "Plan sprint review", completed: true },
-  { id: 7, userId: 1, title: "Prepare presentation", completed: false },
 ];
 
 const users: User[] = [
   { id: 1, name: "Leanne Graham" },
   { id: 2, name: "Ervin Howell" },
   { id: 3, name: "Clementine Bauch" },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+  },
 ];
 
 function getOwnerName(userId: number): string {
   const user = users.find(function (user) {
     return user.id === userId;
   });
+
   if (user) {
     return user.name;
   }
+
   return "Unknown person";
 }
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [showTasks, setShowTasks] = useState(true);
-  const [name, setName] = useState("");
-  const [showGreeting, setShowGreeting] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState(0);
-
-  function handelShowGreeting(): void {
-    setShowGreeting(!showGreeting);
-  }
-
-  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
-    setName(event.target.value);
-  }
+  const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -78,26 +98,15 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function handleShowAllPeople() {
-    setSelectedUserId(0);
-  }
-
-  let greetingMessage = "";
-  if (name === "") {
-    greetingMessage = "";
-  } else if (name === "admin") {
-    greetingMessage = "Welcome back, admin.";
-  } else {
-    greetingMessage = "Hello, " + name + "!";
-  }
-
-  function handleUserFilter(userId: number) {
+  function handleSelectedPerson(userId: number): void {
     setSelectedUserId(userId);
   }
 
   const search = searchText.toLowerCase();
+
   const visibleTasks = tasks.filter((task) => {
     let matchesFilter = false;
+
     if (currentFilter === "all") {
       matchesFilter = true;
     } else if (currentFilter === "completed" && task.completed) {
@@ -110,6 +119,7 @@ function App() {
     const matchesSearch = title.includes(search);
 
     let matchesPerson = false;
+
     if (selectedUserId === 0) {
       matchesPerson = true;
     } else if (task.userId === selectedUserId) {
@@ -120,63 +130,104 @@ function App() {
   });
 
   const totalCount = tasks.length;
+
   const completedCount = tasks.reduce(function (count, task) {
     if (task.completed) {
       return count + 1;
     }
+
     return count;
   }, 0);
+
   const pendingCount = totalCount - completedCount;
 
-  const activePeopleSummary = users
+  const peopleWithCount = users
     .map((user) => {
-      const taskCount = tasks.filter((task) => task.userId === user.id).length;
-      return {
-        id: user.id,
-        name: user.name,
-        taskCount: taskCount,
-      };
+      const count = tasks.filter((task) => task.userId === user.id).length;
+      return { user, count };
     })
-    .filter((e) => {
-      return e.taskCount > 0;
+    .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const newTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, newTask];
+
+    setTasks(newTasks);
+  }
+
+  function handleToggle(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
     });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleted(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
 
   return (
     <div>
       <Header />
+
       <main className="container">
         <section className="stats">
           <StatCard label="Total Tasks" value={totalCount} />
           <StatCard label="Completed" value={completedCount} />
           <StatCard label="Pending" value={pendingCount} />
         </section>
-        <section className="filters">
-          <button onClick={() => setShowTasks(!showTasks)}>
-            {showTasks ? "Hide Tasks" : "Show Tasks"}
-          </button>
 
+        <section className="filters">
           <button
             className={
               "filter-button" + (currentFilter === "all" ? " active" : "")
             }
-            onClick={handleShowAll}>
+            onClick={handleShowAll}
+          >
             All
           </button>
           <button
             className={
               "filter-button" + (currentFilter === "completed" ? " active" : "")
             }
-            onClick={handleShowCompleted}>
+            onClick={handleShowCompleted}
+          >
             Completed
           </button>
           <button
             className={
               "filter-button" + (currentFilter === "pending" ? " active" : "")
             }
-            onClick={handleShowPending}>
+            onClick={handleShowPending}
+          >
             Pending
           </button>
         </section>
+
         <section className="search">
           <input
             type="text"
@@ -186,73 +237,71 @@ function App() {
             onChange={handleSearchChange}
           />
         </section>
+
         <SectionTitle
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
-        <button className="toggle-greeting-button" onClick={handelShowGreeting}>
-          {showGreeting ? "Hide Greeting Section" : "Show Greeting Section"}
-        </button>
-        {showGreeting ? (
-          <div className="name-input-section">
-            <input
-              className="name-input"
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={handleNameChange}
-            />
-            {name !== "" ? <p>{greetingMessage}</p> : null}
-          </div>
-        ) : null}
-        {activePeopleSummary.map((user) => (
-          <PersonSummary
-            key={user.id}
-            name={user.name}
-            taskCount={user.taskCount}
-          />
-        ))}
+
+        <section className="people-summary">
+          {peopleWithCount.map((entry) => {
+            return (
+              <PersonSummary
+                key={entry.user.id}
+                name={entry.user.name}
+                taskCount={entry.count}
+              />
+            );
+          })}
+        </section>
+
         <section className="filters">
           <button
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
             }
-            onClick={handleShowAllPeople}>
+            onClick={() => handleSelectedPerson(0)}
+          >
             All people
           </button>
 
-          {activePeopleSummary.map((user) => (
+          {peopleWithCount.map((entry) => (
             <button
-              key={user.id}
-              className={
-                "filter-button" + (selectedUserId === user.id ? " active" : "")
-              }
-              onClick={() => handleUserFilter(user.id)}>
-              {user.name} ({user.taskCount})
+              key={entry.user.id}
+              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
+              onClick={() => handleSelectedPerson(entry.user.id)}
+            >
+              {entry.user.name} - {entry.count}
             </button>
           ))}
         </section>
-        {showTasks ? (
-          visibleTasks.length == 0 ? (
-            <p className="empty-state">No tasks to show.</p>
-          ) : (
-            <ul className="task-list">
-              {visibleTasks.map((task) => {
-                const statusText = task.completed ? "Completed" : "Pending";
-                const statusClass = task.completed ? "completed" : "pending";
-                return (
-                  <TaskItem
-                    key={task.id}
-                    title={task.title}
-                    ownerName={getOwnerName(task.userId)}
-                    statusText={statusText}
-                    statusClass={statusClass}
-                  />
-                );
-              })}
-            </ul>
-          )
-        ) : null}
+
+        <AddTask selectedUserId={0} users={users} addNewTask={addNewTask} />
+
+        {visibleTasks.length === 0 ? (
+          <p className="empty-state">No tasks to show.</p>
+        ) : (
+          <ul className="task-list">
+            {visibleTasks.map((task) => {
+              const statusText = task.completed ? "Completed" : "Pending";
+              const statusClass = task.completed ? "completed" : "pending";
+
+              return (
+                <TaskItem
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  ownerName={getOwnerName(task.userId)}
+                  statusText={statusText}
+                  statusClass={statusClass}
+                  onToggle={handleToggle}
+                  onDelete={handleDeleted}
+                  onSaveEdit={handleSaveEdit}
+                />
+              );
+            })}
+          </ul>
+        )}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown
