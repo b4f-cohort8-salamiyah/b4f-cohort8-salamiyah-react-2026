@@ -14,7 +14,6 @@ interface Task {
   completed: boolean;
 }
 
-
 interface User {
   id: number;
   name: string;
@@ -80,9 +79,7 @@ function getOwnerName(userId: number): string {
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
-  const [showTasks,setShowtasks] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState(0);
-
   const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
@@ -99,10 +96,6 @@ function App() {
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchText(event.target.value);
-  }
-
-  function handleShowTasks() {
-    setShowtasks(!showTasks);
   }
 
   function handleSelectedPerson(userId: number): void {
@@ -166,6 +159,35 @@ function App() {
     const newTasks = [...tasks, newTask];
 
     setTasks(newTasks);
+  }
+
+  function handleToggle(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleted(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
   }
 
   return (
@@ -242,6 +264,7 @@ function App() {
           >
             All people
           </button>
+
           {peopleWithCount.map((entry) => (
             <button
               key={entry.user.id}
@@ -252,33 +275,8 @@ function App() {
             </button>
           ))}
         </section>
+
         <AddTask selectedUserId={0} users={users} addNewTask={addNewTask} />
-
-
-        <button onClick={handleShowTasks} className="toggle-tasks-button">{showTasks ? "Hide":"Show"}</button>
-        {!showTasks? null :
-        <ul className="task-list">
-          <TaskItem
-            title="Finish JavaScript exercise"
-            ownerName="Leanne Graham"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        
-
-        
-
-          <TaskItem
-            title="Write session notes"
-            ownerName="Clementine Bauch"
-            statusText="Pending"
-            statusClass="pending"
-          />
-        </ul>}
-
-
-          
-
 
         {visibleTasks.length === 0 ? (
           <p className="empty-state">No tasks to show.</p>
@@ -291,10 +289,14 @@ function App() {
               return (
                 <TaskItem
                   key={task.id}
+                  id={task.id}
                   title={task.title}
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onToggle={handleToggle}
+                  onDelete={handleDeleted}
+                  onSaveEdit={handleSaveEdit}
                 />
               );
             })}
