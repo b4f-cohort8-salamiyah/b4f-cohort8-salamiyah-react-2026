@@ -27,6 +27,14 @@ body {
   font-size: 32px;
 }
 
+.form-error 
+{ 
+  color: #c0392b; 
+  font-size: 13px;
+  margin-top: 8px; 
+  width: 100%;
+}
+
 .header p {
   color: #6b7280;
   margin-top: 6px;

@@ -14,21 +14,32 @@ interface TaskItemProps {
 function TaskItem(props: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(props.title);
+  const [placeHolder, setPlaceHolder] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleEditClick() {
     setIsEditing(true);
   }
 
   function handleEditChange(event: ChangeEvent<HTMLInputElement>) {
+    setErrorMessage("");
+    setPlaceHolder("");
     setEditTitle(event.target.value);
   }
 
   function handleSaveClick() {
     const newTitle = editTitle.trim();
     if (!newTitle) {
+      setPlaceHolder("Too Empty");
+      setErrorMessage("Error : please don't set an empty value to the task title");
       return;
     }
-
+    if(newTitle.length > 20){
+      setPlaceHolder("Too Long");
+      setErrorMessage("Error : please don't make task more than 20 characters");
+      return;
+    }
+    setEditTitle(editTitle.trim());
     props.onSaveEdit(props.id, newTitle);
     setIsEditing(false);
   }
@@ -45,6 +56,7 @@ function TaskItem(props: TaskItemProps) {
           className="edit-title-input"
           value={editTitle}
           onChange={handleEditChange}
+          placeholder={placeHolder}
         />
         <span className="task-actions">
           <button
@@ -57,7 +69,9 @@ function TaskItem(props: TaskItemProps) {
             Cancel
           </button>
         </span>
+        {errorMessage?<span className="form-error">{errorMessage}</span>:<span className="form-error"></span>}
       </li>
+      
     );
   }
 
