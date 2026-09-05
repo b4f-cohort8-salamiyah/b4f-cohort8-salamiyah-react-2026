@@ -5,6 +5,7 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -20,7 +21,7 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
@@ -51,6 +52,7 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+  const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -68,12 +70,20 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function handleShowAllPeople() {
-    setSelectedUserId(0);
+  function handleSelectedPerson(userId: number) {
+    setSelectedUserId(userId);
   }
 
-  function handleShowPerson(userId: number) {
-    setSelectedUserId(userId);
+  function handleDeleteTask(taskId: number) {
+    const shouldDelete = window.confirm(
+      "Are you sure you want to delete this task?",
+    );
+
+    if (shouldDelete) {
+      setTasks((currentTasks) =>
+        currentTasks.filter((task) => task.id !== taskId),
+      );
+    }
   }
 
   const search = searchText.toLowerCase();
@@ -103,20 +113,6 @@ function App() {
     return matchesFilter && matchesSearch && matchesPerson;
   });
 
-  const peopleWithTaskCounts = users
-    .map((user) => {
-      const taskCount = tasks.filter(
-        (task) => task.userId === user.id,
-      ).length;
-
-      return {
-        id: user.id,
-        name: user.name,
-        taskCount: taskCount,
-      };
-    })
-    .filter((user) => user.taskCount > 0);
-
   const totalCount = tasks.length;
 
   const completedCount = tasks.reduce(function (count, task) {
@@ -128,6 +124,25 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
+
+  const peopleWithCount = users
+    .map((user) => {
+      const count = tasks.filter((task) => task.userId === user.id).length;
+      return { user, count };
+    })
+    .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const draftTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, draftTask];
+    setTasks(newTasks);
+  }
 
   return (
     <div>
@@ -167,6 +182,8 @@ function App() {
           </button>
         </section>
 
+        <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
+
         <section className="search">
           <input
             type="text"
@@ -183,11 +200,11 @@ function App() {
         />
 
         <section className="people-summary">
-          {peopleWithTaskCounts.map((user) => (
+          {peopleWithCount.map((entry) => (
             <PersonSummary
-              key={user.id}
-              name={user.name}
-              taskCount={user.taskCount}
+              key={entry.user.id}
+              name={entry.user.name}
+              taskCount={entry.count}
             />
           ))}
         </section>
@@ -197,28 +214,23 @@ function App() {
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
             }
-            onClick={handleShowAllPeople}
+            onClick={() => handleSelectedPerson(0)}
           >
             All people
           </button>
 
-          {peopleWithTaskCounts.map((user) => (
+          {peopleWithCount.map((entry) => (
             <button
-              key={user.id}
-              className={
-                "filter-button" +
-                (selectedUserId === user.id ? " active" : "")
-              }
-              onClick={() => handleShowPerson(user.id)}
+              key={entry.user.id}
+              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
+              onClick={() => handleSelectedPerson(entry.user.id)}
             >
-              {user.name} ({user.taskCount})
+              {entry.user.name} - ({entry.count})
             </button>
           ))}
         </section>
 
-        {visibleTasks.length === 0 ? (
-          <p className="empty-state">No tasks to show.</p>
-        ) : (
+        {visibleTasks.length > 0 ? (
           <ul className="task-list">
             {visibleTasks.map((task) => {
               const statusText = task.completed ? "Completed" : "Pending";
@@ -231,10 +243,13 @@ function App() {
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onDelete={() => handleDeleteTask(task.id)}
                 />
               );
             })}
           </ul>
+        ) : (
+          <p className="empty-state">No tasks to show.</p>
         )}
 
         <p className="visible-count">
