@@ -11,11 +11,16 @@ interface TaskItemProps {
   onSaveEdit: (id: number, title: string) => void;
 }
 
+const MAX_TITLE_LENGTH = 50;
+
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState("");
 
   function handleEditClick() {
+    setEditTitle(props.title);
+    setError("");
     setIsEditing(true);
   }
 
@@ -25,18 +30,25 @@ function TaskItem(props: TaskItemProps) {
 
   function handleCancelClick() {
     setIsEditing(false);
+    setError("");
   }
 
   function handleSaveClick() {
-    setIsEditing(false);
-
     const newTitle = editTitle.trim();
 
-    if (!newTitle) {
+    if (newTitle === "") {
+      setError("Title can't be empty.");
+      return;
+    }
+
+    if (newTitle.length > MAX_TITLE_LENGTH) {
+      setError(`Title can't be longer than ${MAX_TITLE_LENGTH} characters.`);
       return;
     }
 
     props.onSaveEdit(props.id, newTitle);
+    setIsEditing(false);
+    setError("");
   }
 
   if (isEditing) {
@@ -49,6 +61,8 @@ function TaskItem(props: TaskItemProps) {
           onChange={handleChangeTitle}
         />
 
+        {error ? <p className="form-error">{error}</p> : null}
+
         <span className="task-actions">
           <button
             className="task-action-button save-button"
@@ -56,6 +70,7 @@ function TaskItem(props: TaskItemProps) {
           >
             Save
           </button>
+
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
@@ -70,9 +85,11 @@ function TaskItem(props: TaskItemProps) {
         <span className="task-title">{props.title}</span>
         <span className="task-user">{props.ownerName}</span>
       </span>
+
       <span className={`task-status ${props.statusClass}`}>
         {props.statusText}
       </span>
+
       <span className="task-actions">
         <button
           className="task-action-button"
@@ -82,9 +99,11 @@ function TaskItem(props: TaskItemProps) {
             ? "Mark Pending"
             : "Mark Completed"}
         </button>
+
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
+
         <button
           className="task-action-button delete-button"
           onClick={() => props.onDelete(props.id)}
