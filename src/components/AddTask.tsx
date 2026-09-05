@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 
 interface User {
   id: number;
@@ -14,6 +14,9 @@ interface AddTaskProps {
 function AddTask(props: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const trimmedTitle = draftTitle.trim();
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -25,7 +28,16 @@ function AddTask(props: AddTaskProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (!trimmedTitle) {
+      setErrorMessage("Title can't be empty");
+      return;
+    }
+    if (draftTitle.length > 20) {
+      setErrorMessage("Too long title")
+      return;
+    }
     props.addNewTask(draftTitle, draftUserId);
+    setErrorMessage("");
 
     setDraftTitle("");
     setDraftUserId(props.selectedUserId);
@@ -57,6 +69,11 @@ function AddTask(props: AddTaskProps) {
       <button type="submit" className="add-task-button">
         Add Task
       </button>
+      {errorMessage.length != 0 ? (
+        <p className="form-error">{errorMessage}</p>
+      ) : (
+        <p></p>
+      )}
     </form>
   );
 }

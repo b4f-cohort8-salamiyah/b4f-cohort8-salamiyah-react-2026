@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import {ChangeEvent, useState} from "react";
 
 interface TaskItemProps {
   id: number;
@@ -14,6 +14,7 @@ interface TaskItemProps {
 function TaskItem(props: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(props.title);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleEditClick() {
     setIsEditing(true);
@@ -26,11 +27,17 @@ function TaskItem(props: TaskItemProps) {
   function handleSaveClick() {
     const newTitle = editTitle.trim();
     if (!newTitle) {
+      setErrorMessage("Title can't be empty");
+      return;
+    }
+    if (newTitle.length > 20) {
+      setErrorMessage("Too long title")
       return;
     }
 
     props.onSaveEdit(props.id, newTitle);
     setIsEditing(false);
+    setErrorMessage("");
   }
 
   function handleCancelClick() {
@@ -57,6 +64,11 @@ function TaskItem(props: TaskItemProps) {
             Cancel
           </button>
         </span>
+        {errorMessage.length != 0 ? (
+          <p className="form-error">{errorMessage}</p>
+        ) : (
+          <p></p>
+        )}
       </li>
     );
   }
