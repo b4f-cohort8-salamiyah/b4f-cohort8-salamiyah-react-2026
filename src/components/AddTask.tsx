@@ -11,6 +11,8 @@ interface AddTaskProps {
   addNewTask: (title: string, userId: number) => void;
 }
 
+const MAX_TITLE_LENGTH = 200;
+
 function AddTask(props: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
@@ -30,6 +32,10 @@ function AddTask(props: AddTaskProps) {
     const trimmedTitle = draftTitle.trim();
     if (trimmedTitle === "") {
       setErrorMessage("Title cannot be empty.");
+      return;
+    }
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setErrorMessage("Title is too long.");
       return;
     }
 
@@ -66,7 +72,7 @@ function AddTask(props: AddTaskProps) {
       <button type="submit" className="add-task-button">
         Add Task
       </button>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {errorMessage && <p className="form-error">{errorMessage}</p>}
     </form>
   );
 }
