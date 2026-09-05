@@ -34,6 +34,34 @@ const users: User[] = [
   { id: 1, name: "Leanne Graham" },
   { id: 2, name: "Ervin Howell" },
   { id: 3, name: "Clementine Bauch" },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+  },
 ];
 
 function getOwnerName(userId: number): string {
@@ -132,6 +160,35 @@ function App() {
     setTasks(newTasks);
   }
 
+  function handleToggleTask(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleteTask(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
   return (
     <div>
       <Header />
@@ -227,10 +284,14 @@ function App() {
               return (
                 <TaskItem
                   key={task.id}
+                  id={task.id}
                   title={task.title}
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onToggle={handleToggleTask}
+                  onDelete={handleDeleteTask}
+                  onSaveEdit={handleSaveEdit}
                 />
               );
             })}
