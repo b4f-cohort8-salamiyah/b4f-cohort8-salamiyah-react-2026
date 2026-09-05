@@ -132,6 +132,26 @@ function App() {
     setTasks(newTasks);
   }
 
+  function toggleTask(taskId: number): void {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task,
+      ),
+    );
+  }
+
+  function deleteTask(taskId: number): void {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  }
+
+  function saveTaskEdit(taskId: number, title: string): void {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, title: title.trim() } : task,
+      ),
+    );
+  }
+
   return (
     <div>
       <Header />
@@ -227,10 +247,14 @@ function App() {
               return (
                 <TaskItem
                   key={task.id}
+                  id={task.id}
                   title={task.title}
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onToggle={() => toggleTask(task.id)}
+                  onDelete={() => deleteTask(task.id)}
+                  onSaveEdit={(title) => saveTaskEdit(task.id, title)}
                 />
               );
             })}
