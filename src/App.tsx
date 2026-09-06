@@ -148,7 +148,6 @@ function App() {
       const count = tasks.filter((task) => task.userId === user.id).length;
       return { user, count };
     })
-    
     .filter((entry) => entry.count > 0);
 
   function addNewTask(title: string, userId: number): void {
