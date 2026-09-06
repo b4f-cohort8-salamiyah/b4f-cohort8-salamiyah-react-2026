@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ChangeEvent } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
-
-import { ChangeEvent, useState } from "react";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -81,12 +80,11 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState(initialTasks);
 
-  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
-  const [hasTaskError, setHasTaskError] = useState(false);
-
-  function handleShowAll() {}
+  function handleShowAll() {
+    setCurrentFilter("all");
+  }
 
   function handleShowCompleted() {
     setCurrentFilter("completed");
@@ -161,53 +159,6 @@ function App() {
     const newTasks = [...tasks, draftTask];
     setTasks(newTasks);
   }
-
-  function handleToggleTask(id: number): void {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, completed: !task.completed };
-      }
-
-      return task;
-    });
-
-    setTasks(updatedTasks);
-  }
-
-  function handleDeleteTask(id: number): void {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
-  }
-
-  function handleSaveEdit(id: number, newTitle: string): void {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, title: newTitle };
-      }
-
-      return task;
-    });
-
-    setTasks(updatedTasks);
-  }
-
-  async function loadTaskData() {
-    setIsLoadingTasks(true);
-    setHasTaskError(false);
-
-    try {
-      const _tasks = await fetchTasks();
-      setTasks(_tasks);
-      setIsLoadingTasks(false);
-    } catch (error) {
-      setHasTaskError(true);
-      setIsLoadingTasks(false);
-    }
-  }
-
-  useEffect(() => {
-    loadTaskData();
-  }, []);
 
   return (
     <div>
