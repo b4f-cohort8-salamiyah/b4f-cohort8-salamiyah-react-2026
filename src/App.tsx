@@ -5,6 +5,7 @@ import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
+import AddTask from "./components/AddTask";
 
 interface Task {
   id: number;
@@ -20,7 +21,7 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
   { id: 2, userId: 2, title: "Review pull request", completed: true },
   { id: 3, userId: 3, title: "Write session notes", completed: false },
@@ -33,6 +34,34 @@ const users: User[] = [
   { id: 1, name: "Leanne Graham" },
   { id: 2, name: "Ervin Howell" },
   { id: 3, name: "Clementine Bauch" },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+  },
 ];
 
 function getOwnerName(userId: number): string {
@@ -51,6 +80,7 @@ function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
+  const [tasks, setTasks] = useState(initialTasks);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -68,11 +98,7 @@ function App() {
     setSearchText(event.target.value);
   }
 
-  function handleShowAllPeople() {
-    setSelectedUserId(0);
-  }
-
-  function handleShowPerson(userId: number) {
+  function handleSelectedPerson(userId: number): void {
     setSelectedUserId(userId);
   }
 
@@ -114,6 +140,55 @@ function App() {
   }, 0);
 
   const pendingCount = totalCount - completedCount;
+
+  const peopleWithCount = users
+    .map((user) => {
+      const count = tasks.filter((task) => task.userId === user.id).length;
+      return { user, count };
+    })
+    .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const newTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, newTask];
+
+    setTasks(newTasks);
+  }
+
+  function handleToggle(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleted(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
 
   return (
     <div>
@@ -169,20 +244,12 @@ function App() {
         />
 
         <section className="people-summary">
-          {users.map((user) => {
-            const personTaskCount = tasks.filter(
-              (task) => task.userId === user.id,
-            ).length;
-
-            if (personTaskCount === 0) {
-              return null;
-            }
-
+          {peopleWithCount.map((entry) => {
             return (
               <PersonSummary
-                key={user.id}
-                name={user.name}
-                taskCount={personTaskCount}
+                key={entry.user.id}
+                name={entry.user.name}
+                taskCount={entry.count}
               />
             );
           })}
@@ -193,26 +260,26 @@ function App() {
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
             }
-            onClick={handleShowAllPeople}
+            onClick={() => handleSelectedPerson(0)}
           >
             All people
           </button>
 
-          {users.map((user) => (
+          {peopleWithCount.map((entry) => (
             <button
-              key={user.id}
-              className={
-                "filter-button" + (selectedUserId === user.id ? " active" : "")
-              }
-              onClick={() => handleShowPerson(user.id)}
+              key={entry.user.id}
+              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
+              onClick={() => handleSelectedPerson(entry.user.id)}
             >
-              {user.name}
+              {entry.user.name} - {entry.count}
             </button>
           ))}
         </section>
 
+        <AddTask selectedUserId={0} users={users} addNewTask={addNewTask} />
+
         {visibleTasks.length === 0 ? (
-          <p className="wmpty-state">No tasks to show.</p>
+          <p className="empty-state">No tasks to show.</p>
         ) : (
           <ul className="task-list">
             {visibleTasks.map((task) => {
@@ -222,10 +289,14 @@ function App() {
               return (
                 <TaskItem
                   key={task.id}
+                  id={task.id}
                   title={task.title}
                   ownerName={getOwnerName(task.userId)}
                   statusText={statusText}
                   statusClass={statusClass}
+                  onToggle={handleToggle}
+                  onDelete={handleDeleted}
+                  onSaveEdit={handleSaveEdit}
                 />
               );
             })}
