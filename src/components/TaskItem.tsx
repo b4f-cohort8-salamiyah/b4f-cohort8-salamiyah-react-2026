@@ -14,40 +14,63 @@ interface TaskItemProps {
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const MAX_TITLE_LENGTH = 200;
 
   function handleEditClick() {
     setIsEditing(true);
+    setEditTitle(props.title);
+    setErrorMessage("");
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   }
 
   function handleCancelClick() {
     setIsEditing(false);
+    setEditTitle(props.title);
+    setErrorMessage("");
   }
 
   function handleSaveClick() {
-    setIsEditing(false);
+    const trimmedTitle = editTitle.trim();
 
-    const newTitle = editTitle.trim();
+   
+    if (trimmedTitle === "") {
+      setErrorMessage("Title can't be empty.");
+      return; 
+    }
 
-    if (!newTitle) {
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setErrorMessage(
+        `Title is too long (maximum ${MAX_TITLE_LENGTH} characters).`,
+      );
       return;
     }
 
-    props.onSaveEdit(props.id, newTitle);
+    props.onSaveEdit(props.id, trimmedTitle);
+    setIsEditing(false);
+    setErrorMessage("");
   }
 
   if (isEditing) {
     return (
       <li className="task-item">
-        <input
-          type="text"
-          className="edit-title-input"
-          value={editTitle}
-          onChange={handleChangeTitle}
-        />
+        <div className="task-edit-container">
+          <input
+            type="text"
+            className="edit-title-input"
+            value={editTitle}
+            onChange={handleChangeTitle}
+            autoFocus
+          />
+          {errorMessage && <p className="form-error">{errorMessage}</p>}
+        </div>
 
         <span className="task-actions">
           <button
