@@ -14,33 +14,49 @@ interface TaskItemProps {
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMessage , setErrorMessage] = useState("");
 
   function handleEditClick() {
+    setEditTitle(props.title);
+    setErrorMessage("");
     setIsEditing(true);
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
+     if (errorMessage) {
+      setErrorMessage("");
+    }
   }
 
   function handleCancelClick() {
+    setErrorMessage("");
+    setEditTitle(props.title);
     setIsEditing(false);
   }
 
   function handleSaveClick() {
-    setIsEditing(false);
-
+     
     const newTitle = editTitle.trim();
 
     if (!newTitle) {
+      setErrorMessage("Title can't be empty.");
+      return;
+    }
+    if(newTitle.length > 200)
+    {
+      setErrorMessage("Input exceeds the maximum character limit.");
       return;
     }
 
+    setErrorMessage("");
     props.onSaveEdit(props.id, newTitle);
+    setIsEditing(false);
   }
 
   if (isEditing) {
     return (
+      <div>
       <li className="task-item">
         <input
           type="text"
@@ -61,6 +77,8 @@ function TaskItem(props: TaskItemProps) {
           </button>
         </span>
       </li>
+      {errorMessage && <p className="form-error">{errorMessage}</p>}
+      </div>
     );
   }
 

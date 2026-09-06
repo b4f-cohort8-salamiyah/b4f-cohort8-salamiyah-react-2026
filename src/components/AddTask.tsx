@@ -14,20 +14,36 @@ interface AddTaskProps {
 function AddTask(props: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);
   const [draftTitle, setDraftTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
+    if(errorMessage)
+    {
+      setErrorMessage("");
+    }
   }
 
   function handleUserChange(event: ChangeEvent<HTMLSelectElement>) {
     setDraftUserId(Number(event.target.value));
+
   }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
+    const trimmedTitle = draftTitle.trim();
+    if(trimmedTitle === "")
+    {
+      setErrorMessage("Title can't be empty.");
+      return;
+    }
+    if (trimmedTitle.length > 200) {
+      setErrorMessage("Input exceeds the maximum character limit.");
+      return;
+    }
     props.onAddTask(draftTitle, draftUserId);
-
+    setErrorMessage("");
     setDraftTitle("");
     setDraftUserId(props.defaultUserId);
   }
@@ -56,6 +72,7 @@ function AddTask(props: AddTaskProps) {
       <button className="add-task-button" type="submit">
         Add Task
       </button>
+      {errorMessage && <p className="form-error">{errorMessage}</p>}
     </form>
   );
 }

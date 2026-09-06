@@ -179,6 +179,13 @@ body {
   background-color: #e08b1a;
 }
 
+.form-error{
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 8px;
+  width: 100%;
+}
+
 /* ---------- People summary ---------- */
 
 .people-summary {
