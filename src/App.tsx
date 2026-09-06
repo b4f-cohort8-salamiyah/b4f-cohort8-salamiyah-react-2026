@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
@@ -21,26 +21,38 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const initialTasks: Task[] = [
-  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
-  { id: 2, userId: 2, title: "Review pull request", completed: true },
-  { id: 3, userId: 3, title: "Write session notes", completed: false },
-  { id: 4, userId: 1, title: "Update project README", completed: true },
-  { id: 5, userId: 2, title: "Fix search bug", completed: false },
-  { id: 6, userId: 3, title: "Plan sprint review", completed: true },
-];
-
 const users: User[] = [
   { id: 1, name: "Leanne Graham" },
   { id: 2, name: "Ervin Howell" },
   { id: 3, name: "Clementine Bauch" },
-  { id: 4, name: "Patricia Lebsack" },
-  { id: 5, name: "Chelsey Dietrich" },
-  { id: 6, name: "Mrs. Dennis Schulist" },
-  { id: 7, name: "Kurtis Weissnat" },
-  { id: 8, name: "Nicholas Runolfsdottir V" },
-  { id: 9, name: "Glenna Reichert" },
-  { id: 10, name: "Clementina DuBuque" },
+  {
+    id: 4,
+    name: "Patricia Lebsack",
+  },
+  {
+    id: 5,
+    name: "Chelsey Dietrich",
+  },
+  {
+    id: 6,
+    name: "Mrs. Dennis Schulist",
+  },
+  {
+    id: 7,
+    name: "Kurtis Weissnat",
+  },
+  {
+    id: 8,
+    name: "Nicholas Runolfsdottir V",
+  },
+  {
+    id: 9,
+    name: "Glenna Reichert",
+  },
+  {
+    id: 10,
+    name: "Clementina DuBuque",
+  },
 ];
 
 function getOwnerName(userId: number): string {
@@ -55,11 +67,23 @@ function getOwnerName(userId: number): string {
   return "Unknown person";
 }
 
+const TASKS_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
+
+async function fetchTasks(): Promise<Task[]> {
+  const response = await fetch(TASKS_URL);
+  const tasks = (await response.json()) as Task[];
+
+  return tasks;
+}
+
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+  const [hasTaskError, setHasTaskError] = useState(false);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -81,48 +105,6 @@ function App() {
     setSelectedUserId(userId);
   }
 
-  function addNewTask(title: string, userId: number): void {
-    const draftTask: Task = {
-      id: tasks.length + 1,
-      userId: userId,
-      title: title.trim(),
-      completed: false,
-    };
-
-    const newTasks = [...tasks, draftTask];
-    setTasks(newTasks);
-  }
-
-  function handleToggleTask(id: number): void {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, completed: !task.completed };
-      }
-
-      return task;
-    });
-
-    setTasks(updatedTasks);
-  }
-
-  function handleDeleteTask(id: number): void {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
-  }
-
-  function handleSaveEdit(id: number, newTitle: string): void {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return { ...task, title: newTitle };
-      }
-
-      return task;
-    });
-
-    setTasks(updatedTasks);
-  }
-
-  // تصفية وحساب المهام (مرة واحدة فقط)
   const search = searchText.toLowerCase();
 
   const visibleTasks = tasks.filter((task) => {
@@ -168,6 +150,65 @@ function App() {
       return { user, count };
     })
     .filter((entry) => entry.count > 0);
+
+  function addNewTask(title: string, userId: number): void {
+    const draftTask: Task = {
+      id: tasks.length + 1,
+      userId: userId,
+      title: title.trim(),
+      completed: false,
+    };
+
+    const newTasks = [...tasks, draftTask];
+    setTasks(newTasks);
+  }
+
+  function handleToggleTask(id: number): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, completed: !task.completed };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function handleDeleteTask(id: number): void {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+  }
+
+  function handleSaveEdit(id: number, newTitle: string): void {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === id) {
+        return { ...task, title: newTitle };
+      }
+
+      return task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  async function loadTaskData() {
+    setIsLoadingTasks(true);
+    setHasTaskError(false);
+
+    try {
+      const _tasks = await fetchTasks();
+      setTasks(_tasks);
+      setIsLoadingTasks(false);
+    } catch (error) {
+      setHasTaskError(true);
+      setIsLoadingTasks(false);
+    }
+  }
+
+  useEffect(() => {
+    loadTaskData();
+  }, []);
 
   return (
     <div>
@@ -255,30 +296,46 @@ function App() {
           ))}
         </section>
 
-        {visibleTasks.length > 0 ? (
-          <ul className="task-list">
-            {visibleTasks.map((task) => {
-              const statusText = task.completed ? "Completed" : "Pending";
-              const statusClass = task.completed ? "completed" : "pending";
+        {isLoadingTasks && <p className="message">Loading tasks...</p>}
 
-              return (
-                <TaskItem
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  ownerName={getOwnerName(task.userId)}
-                  statusText={statusText}
-                  statusClass={statusClass}
-                  onToggle={handleToggleTask}
-                  onDelete={handleDeleteTask}
-                  onSaveEdit={handleSaveEdit}
-                />
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="empty-state">No tasks to show.</p>
+        {!isLoadingTasks && hasTaskError && (
+          <div className="message error">
+            <p>
+              We could not load the tasks. Please check your internet connection
+              and try again.
+            </p>
+            <button className="retry-button" onClick={loadTaskData}>
+              Retry
+            </button>
+          </div>
         )}
+
+        {!isLoadingTasks &&
+          !hasTaskError &&
+          (visibleTasks.length > 0 ? (
+            <ul className="task-list">
+              {visibleTasks.map((task) => {
+                const statusText = task.completed ? "Completed" : "Pending";
+                const statusClass = task.completed ? "completed" : "pending";
+
+                return (
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                    title={task.title}
+                    ownerName={getOwnerName(task.userId)}
+                    statusText={statusText}
+                    statusClass={statusClass}
+                    onToggle={handleToggleTask}
+                    onDelete={handleDeleteTask}
+                    onSaveEdit={handleSaveEdit}
+                  />
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="empty-state">No tasks to show.</p>
+          ))}
 
         <p className="visible-count">
           {visibleTasks.length} of {tasks.length} tasks shown

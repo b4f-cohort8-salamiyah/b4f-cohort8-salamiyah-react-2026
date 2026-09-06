@@ -11,52 +11,47 @@ interface TaskItemProps {
   onSaveEdit: (id: number, title: string) => void;
 }
 
+const MAX_TITLE_LENGTH = 200;
+
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
-  const [errorMessage , setErrorMessage] = useState("");
+  const [editError, setEditError] = useState("");
 
   function handleEditClick() {
-    setEditTitle(props.title);
-    setErrorMessage("");
     setIsEditing(true);
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
-     if (errorMessage) {
-      setErrorMessage("");
-    }
   }
 
   function handleCancelClick() {
-    setErrorMessage("");
-    setEditTitle(props.title);
     setIsEditing(false);
+    setEditError("");
   }
 
   function handleSaveClick() {
-     
     const newTitle = editTitle.trim();
 
-    if (!newTitle) {
-      setErrorMessage("Title can't be empty.");
-      return;
-    }
-    if(newTitle.length > 200)
-    {
-      setErrorMessage("Input exceeds the maximum character limit.");
+    if (newTitle === "") {
+      setEditError("Title can't be empty.");
       return;
     }
 
-    setErrorMessage("");
+    if (newTitle.length > MAX_TITLE_LENGTH) {
+      setEditError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
     props.onSaveEdit(props.id, newTitle);
+
+    setEditError("");
     setIsEditing(false);
   }
 
   if (isEditing) {
     return (
-      <div>
       <li className="task-item">
         <input
           type="text"
@@ -75,10 +70,9 @@ function TaskItem(props: TaskItemProps) {
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
+          {editError !== "" && <p className="form-error">{editError}</p>}
         </span>
       </li>
-      {errorMessage && <p className="form-error">{errorMessage}</p>}
-      </div>
     );
   }
 
@@ -88,7 +82,6 @@ function TaskItem(props: TaskItemProps) {
         <span className="task-title">{props.title}</span>
         <span className="task-user">{props.ownerName}</span>
       </span>
-
       <span className={`task-status ${props.statusClass}`}>
         {props.statusText}
       </span>
@@ -111,7 +104,6 @@ function TaskItem(props: TaskItemProps) {
           Delete
         </button>
       </span>
-
     </li>
   );
 }

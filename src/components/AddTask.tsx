@@ -11,41 +11,41 @@ interface AddTaskProps {
   onAddTask: (title: string, userId: number) => void;
 }
 
+const MAX_TITLE_LENGTH = 1;
+
 function AddTask(props: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);
   const [draftTitle, setDraftTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
-    if(errorMessage)
-    {
-      setErrorMessage("");
-    }
   }
 
   function handleUserChange(event: ChangeEvent<HTMLSelectElement>) {
     setDraftUserId(Number(event.target.value));
-
   }
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     const trimmedTitle = draftTitle.trim();
-    if(trimmedTitle === "")
-    {
-      setErrorMessage("Title can't be empty.");
+
+    if (!trimmedTitle) {
+      setFormError("Title can't be empty.");
       return;
     }
-    if (trimmedTitle.length > 200) {
-      setErrorMessage("Input exceeds the maximum character limit.");
+
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
       return;
     }
-    props.onAddTask(draftTitle, draftUserId);
-    setErrorMessage("");
+
+    props.onAddTask(trimmedTitle, draftUserId);
+
     setDraftTitle("");
     setDraftUserId(props.defaultUserId);
+    setFormError("");
   }
 
   return (
@@ -72,7 +72,7 @@ function AddTask(props: AddTaskProps) {
       <button className="add-task-button" type="submit">
         Add Task
       </button>
-      {errorMessage && <p className="form-error">{errorMessage}</p>}
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }
