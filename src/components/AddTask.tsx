@@ -11,7 +11,7 @@ interface AddTaskProps {
   onAddTask: (title: string, userId: number) => void;
 }
 
-const MAX_TITLE_LENGTH = 1;
+const MAX_TITLE_LENGTH = 200;
 
 function AddTask(props: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);

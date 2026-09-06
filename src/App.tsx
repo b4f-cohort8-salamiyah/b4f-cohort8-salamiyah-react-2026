@@ -21,53 +21,8 @@ interface User {
 
 type FilterStatus = "all" | "completed" | "pending";
 
-const users: User[] = [
-  { id: 1, name: "Leanne Graham" },
-  { id: 2, name: "Ervin Howell" },
-  { id: 3, name: "Clementine Bauch" },
-  {
-    id: 4,
-    name: "Patricia Lebsack",
-  },
-  {
-    id: 5,
-    name: "Chelsey Dietrich",
-  },
-  {
-    id: 6,
-    name: "Mrs. Dennis Schulist",
-  },
-  {
-    id: 7,
-    name: "Kurtis Weissnat",
-  },
-  {
-    id: 8,
-    name: "Nicholas Runolfsdottir V",
-  },
-  {
-    id: 9,
-    name: "Glenna Reichert",
-  },
-  {
-    id: 10,
-    name: "Clementina DuBuque",
-  },
-];
-
-function getOwnerName(userId: number): string {
-  const user = users.find(function (user) {
-    return user.id === userId;
-  });
-
-  if (user) {
-    return user.name;
-  }
-
-  return "Unknown person";
-}
-
 const TASKS_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
+const USERS_URL = "https://jsonplaceholder.typicode.com/users?_limit=0";
 
 async function fetchTasks(): Promise<Task[]> {
   const response = await fetch(TASKS_URL);
@@ -76,14 +31,24 @@ async function fetchTasks(): Promise<Task[]> {
   return tasks;
 }
 
+async function fetchUsers(): Promise<User[]> {
+  const response = await fetch(USERS_URL);
+  const users = (await response.json()) as User[];
+
+  return users;
+}
+
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
   const [tasks, setTasks] = useState<Task[]>([]);
-
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [hasTaskError, setHasTaskError] = useState(false);
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [hasUserError, setHasUserError] = useState(false);
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -105,6 +70,17 @@ function App() {
     setSelectedUserId(userId);
   }
 
+  function getOwnerName(userId: number): string {
+    const user = users.find(function (user) {
+      return user.id === userId;
+    });
+
+    if (user) {
+      return user.name;
+    }
+
+    return "Unknown person";
+  }
   const search = searchText.toLowerCase();
 
   const visibleTasks = tasks.filter((task) => {
@@ -206,8 +182,23 @@ function App() {
     }
   }
 
+  async function loadUserData() {
+    setIsLoadingUsers(true);
+    setHasUserError(false);
+
+    try {
+      const _users = await fetchUsers();
+      setUsers(_users);
+      setIsLoadingUsers(false);
+    } catch (error) {
+      setHasUserError(true);
+      setIsLoadingUsers(false);
+    }
+  }
+
   useEffect(() => {
     loadTaskData();
+    loadUserData();
   }, []);
 
   return (
@@ -264,15 +255,29 @@ function App() {
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
+        {isLoadingUsers && <p className="message">Loading users...</p>}
 
+        {!isLoadingUsers && hasUserError && (
+          <div className="message error">
+            <p>
+              We could not load the users. Please check your internet connection
+              and try again.
+            </p>
+            <button className="retry-button" onClick={loadUserData}>
+              Retry
+            </button>
+          </div>
+        )}
         <section className="people-summary">
-          {peopleWithCount.map((entry) => (
-            <PersonSummary
-              key={entry.user.id}
-              name={entry.user.name}
-              taskCount={entry.count}
-            />
-          ))}
+          {!isLoadingUsers &&
+            !hasUserError &&
+            peopleWithCount.map((entry) => (
+              <PersonSummary
+                key={entry.user.id}
+                name={entry.user.name}
+                taskCount={entry.count}
+              />
+            ))}
         </section>
 
         <section className="filters">
