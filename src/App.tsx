@@ -22,7 +22,6 @@ interface User {
 type FilterStatus = "all" | "completed" | "pending";
 
 const TASKS_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
-const USERS_URL = "https://jsonplaceholder.typicode.com/users?_limit=0";
 
 async function fetchTasks(): Promise<Task[]> {
   const response = await fetch(TASKS_URL);
@@ -30,6 +29,8 @@ async function fetchTasks(): Promise<Task[]> {
 
   return tasks;
 }
+
+const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
 async function fetchUsers(): Promise<User[]> {
   const response = await fetch(USERS_URL);
@@ -43,12 +44,24 @@ function App() {
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [hasTaskError, setHasTaskError] = useState(false);
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
-  const [hasUserError, setHasUserError] = useState(false);
+  const [hasUsersError, setHasUsersError] = useState(false);
+
+  function getOwnerName(userId: number): string {
+    const user = users.find(function (user) {
+      return user.id === userId;
+    });
+
+    if (user) {
+      return user.name;
+    }
+
+    return "Unknown person";
+  }
 
   function handleShowAll() {
     setCurrentFilter("all");
@@ -177,28 +190,26 @@ function App() {
       setTasks(_tasks);
       setIsLoadingTasks(false);
     } catch (error) {
+      console.log(error);
       setHasTaskError(true);
       setIsLoadingTasks(false);
     }
   }
 
-  async function loadUserData() {
-    setIsLoadingUsers(true);
-    setHasUserError(false);
-
+  async function loadUsersData() {
+    setHasUsersError(false);
     try {
       const _users = await fetchUsers();
       setUsers(_users);
-      setIsLoadingUsers(false);
     } catch (error) {
-      setHasUserError(true);
-      setIsLoadingUsers(false);
+      console.log(error);
+      setHasUsersError(true);
     }
   }
 
   useEffect(() => {
     loadTaskData();
-    loadUserData();
+    loadUsersData();
   }, []);
 
   return (
@@ -255,19 +266,22 @@ function App() {
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
-        {isLoadingUsers && <p className="message">Loading users...</p>}
 
-        {!isLoadingUsers && hasUserError && (
+        {users.length === 0 && !hasUsersError && (
+          <p className="message">Loading people...</p>
+        )}
+        {hasUsersError && (
           <div className="message error">
             <p>
-              We could not load the users. Please check your internet connection
-              and try again.
+              We could not load the people list. Please check your internet
+              connection and try again.
             </p>
-            <button className="retry-button" onClick={loadUserData}>
+            <button className="retry-button" onClick={loadUsersData}>
               Retry
             </button>
           </div>
         )}
+
         <section className="people-summary">
           {!isLoadingUsers &&
             !hasUserError &&
