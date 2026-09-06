@@ -11,18 +11,15 @@ interface AddTaskProps {
   onAddTask: (title: string, userId: number) => void;
 }
 
+const MAX_TITLE_LENGTH = 1;
+
 function AddTask(props: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);
   const [draftTitle, setDraftTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const MAX_TITLE_LENGTH = 200;
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
-    if (errorMessage) {
-      setErrorMessage("");
-    }
   }
 
   function handleUserChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -34,15 +31,13 @@ function AddTask(props: AddTaskProps) {
 
     const trimmedTitle = draftTitle.trim();
 
-    if (trimmedTitle === "") {
-      setErrorMessage("Title can't be empty.");
+    if (!trimmedTitle) {
+      setFormError("Title can't be empty.");
       return;
     }
 
     if (trimmedTitle.length > MAX_TITLE_LENGTH) {
-      setErrorMessage(
-        `Title is too long (maximum ${MAX_TITLE_LENGTH} characters).`,
-      );
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
       return;
     }
 
@@ -50,7 +45,7 @@ function AddTask(props: AddTaskProps) {
 
     setDraftTitle("");
     setDraftUserId(props.defaultUserId);
-    setErrorMessage("");
+    setFormError("");
   }
 
   return (
@@ -70,19 +65,14 @@ function AddTask(props: AddTaskProps) {
       >
         <option value={props.defaultUserId}>Select user</option>
         {props.users.map((user) => {
-          return (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          );
+          return <option value={user.id}>{user.name}</option>;
         })}
       </select>
 
       <button className="add-task-button" type="submit">
         Add Task
       </button>
-
-      {errorMessage && <p className="form-error">{errorMessage}</p>}
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }

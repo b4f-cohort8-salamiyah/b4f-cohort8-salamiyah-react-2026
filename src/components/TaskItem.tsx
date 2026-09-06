@@ -11,66 +11,54 @@ interface TaskItemProps {
   onSaveEdit: (id: number, title: string) => void;
 }
 
+const MAX_TITLE_LENGTH = 200;
+
 function TaskItem(props: TaskItemProps) {
   const [editTitle, setEditTitle] = useState(props.title);
   const [isEditing, setIsEditing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const MAX_TITLE_LENGTH = 200;
+  const [editError, setEditError] = useState("");
 
   function handleEditClick() {
     setIsEditing(true);
-    setEditTitle(props.title);
-    setErrorMessage("");
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
-    if (errorMessage) {
-      setErrorMessage("");
-    }
   }
 
   function handleCancelClick() {
     setIsEditing(false);
-    setEditTitle(props.title);
-    setErrorMessage("");
+    setEditError("");
   }
 
   function handleSaveClick() {
-    const trimmedTitle = editTitle.trim();
+    const newTitle = editTitle.trim();
 
-   
-    if (trimmedTitle === "") {
-      setErrorMessage("Title can't be empty.");
-      return; 
-    }
-
-    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
-      setErrorMessage(
-        `Title is too long (maximum ${MAX_TITLE_LENGTH} characters).`,
-      );
+    if (newTitle === "") {
+      setEditError("Title can't be empty.");
       return;
     }
 
-    props.onSaveEdit(props.id, trimmedTitle);
+    if (newTitle.length > MAX_TITLE_LENGTH) {
+      setEditError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    props.onSaveEdit(props.id, newTitle);
+
+    setEditError("");
     setIsEditing(false);
-    setErrorMessage("");
   }
 
   if (isEditing) {
     return (
       <li className="task-item">
-        <div className="task-edit-container">
-          <input
-            type="text"
-            className="edit-title-input"
-            value={editTitle}
-            onChange={handleChangeTitle}
-            autoFocus
-          />
-          {errorMessage && <p className="form-error">{errorMessage}</p>}
-        </div>
+        <input
+          type="text"
+          className="edit-title-input"
+          value={editTitle}
+          onChange={handleChangeTitle}
+        />
 
         <span className="task-actions">
           <button
@@ -82,6 +70,7 @@ function TaskItem(props: TaskItemProps) {
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
+          {editError !== "" && <p className="form-error">{editError}</p>}
         </span>
       </li>
     );

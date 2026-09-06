@@ -327,9 +327,40 @@ body {
   font-size: 14px;
   padding: 6px 10px;
 }
+
 .form-error {
-color: #c0392b;
-font-size: 13px;
-margin-top: 8px;
-width: 100%
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.message {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  color: #6b7280;
+  margin-top: 20px;
+  padding: 24px;
+  text-align: center;
+}
+
+.message.error {
+  border-color: #f0d7d3;
+  color: #c0392b;
+}
+
+.retry-button {
+  background-color: #3b6ef5;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 8px 16px;
+}
+
+.retry-button:hover {
+  background-color: #2f5cd6;
 }
