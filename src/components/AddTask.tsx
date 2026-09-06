@@ -11,9 +11,12 @@ interface AddTaskProps {
   onAddTask: (title: string, userId: number) => void;
 }
 
+const MAX_TITLE_LENGTH = 1;
+
 function AddTask(props: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);
   const [draftTitle, setDraftTitle] = useState("");
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -26,10 +29,23 @@ function AddTask(props: AddTaskProps) {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    props.onAddTask(draftTitle, draftUserId);
+    const trimmedTitle = draftTitle.trim();
+
+    if (!trimmedTitle) {
+      setFormError("Title can't be empty.");
+      return;
+    }
+
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    props.onAddTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
     setDraftUserId(props.defaultUserId);
+    setFormError("");
   }
 
   return (
@@ -56,6 +72,7 @@ function AddTask(props: AddTaskProps) {
       <button className="add-task-button" type="submit">
         Add Task
       </button>
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }
