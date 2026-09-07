@@ -1,100 +1,41 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
+import { Task, User, FilterStatus } from "./types";
+import { fetchTasks, fetchUsers } from "./api";
 import Header from "./components/Header";
-import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
 import AddTask from "./components/AddTask";
-
-interface Task {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
-}
-
-interface User {
-  id: number;
-  name: string;
-}
-
-type FilterStatus = "all" | "completed" | "pending";
-
-const users: User[] = [
-  { id: 1, name: "Leanne Graham" },
-  { id: 2, name: "Ervin Howell" },
-  { id: 3, name: "Clementine Bauch" },
-  {
-    id: 4,
-    name: "Patricia Lebsack",
-  },
-  {
-    id: 5,
-    name: "Chelsey Dietrich",
-  },
-  {
-    id: 6,
-    name: "Mrs. Dennis Schulist",
-  },
-  {
-    id: 7,
-    name: "Kurtis Weissnat",
-  },
-  {
-    id: 8,
-    name: "Nicholas Runolfsdottir V",
-  },
-  {
-    id: 9,
-    name: "Glenna Reichert",
-  },
-  {
-    id: 10,
-    name: "Clementina DuBuque",
-  },
-];
-
-function getOwnerName(userId: number): string {
-  const user = users.find(function (user) {
-    return user.id === userId;
-  });
-
-  if (user) {
-    return user.name;
-  }
-
-  return "Unknown person";
-}
-
-const TASKS_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
-
-async function fetchTasks(): Promise<Task[]> {
-  const response = await fetch(TASKS_URL);
-  const tasks = (await response.json()) as Task[];
-
-  return tasks;
-}
+import StatsBar from "./components/StatsBar";
+import FilterButtons from "./components/FilterButtons";
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [hasTaskError, setHasTaskError] = useState(false);
 
-  function handleShowAll() {
-    setCurrentFilter("all");
+  const [hasUsersError, setHasUsersError] = useState(false);
+
+  function getOwnerName(userId: number): string {
+    const user = users.find(function (user) {
+      return user.id === userId;
+    });
+
+    if (user) {
+      return user.name;
+    }
+
+    return "Unknown person";
   }
 
-  function handleShowCompleted() {
-    setCurrentFilter("completed");
-  }
-
-  function handleShowPending() {
-    setCurrentFilter("pending");
+  function handleStatusFilter(filter: FilterStatus) {
+    setCurrentFilter(filter);
   }
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
@@ -201,13 +142,26 @@ function App() {
       setTasks(_tasks);
       setIsLoadingTasks(false);
     } catch (error) {
+      console.log(error);
       setHasTaskError(true);
       setIsLoadingTasks(false);
     }
   }
 
+  async function loadUsersData() {
+    setHasUsersError(false);
+    try {
+      const _users = await fetchUsers();
+      setUsers(_users);
+    } catch (error) {
+      console.log(error);
+      setHasUsersError(true);
+    }
+  }
+
   useEffect(() => {
     loadTaskData();
+    loadUsersData();
   }, []);
 
   return (
@@ -215,38 +169,16 @@ function App() {
       <Header />
 
       <main className="container">
-        <section className="stats">
-          <StatCard label="Total Tasks" value={totalCount} />
-          <StatCard label="Completed" value={completedCount} />
-          <StatCard label="Pending" value={pendingCount} />
-        </section>
+        <StatsBar
+          total={totalCount}
+          completed={completedCount}
+          pending={pendingCount}
+        />
 
-        <section className="filters">
-          <button
-            className={
-              "filter-button" + (currentFilter === "all" ? " active" : "")
-            }
-            onClick={handleShowAll}
-          >
-            All
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "completed" ? " active" : "")
-            }
-            onClick={handleShowCompleted}
-          >
-            Completed
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "pending" ? " active" : "")
-            }
-            onClick={handleShowPending}
-          >
-            Pending
-          </button>
-        </section>
+        <FilterButtons
+          currentFilter={currentFilter}
+          onChange={handleStatusFilter}
+        />
 
         <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
 
@@ -264,6 +196,21 @@ function App() {
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
+
+        {users.length === 0 && !hasUsersError && (
+          <p className="message">Loading people...</p>
+        )}
+        {hasUsersError && (
+          <div className="message error">
+            <p>
+              We could not load the people list. Please check your internet
+              connection and try again.
+            </p>
+            <button className="retry-button" onClick={loadUsersData}>
+              Retry
+            </button>
+          </div>
+        )}
 
         <section className="people-summary">
           {peopleWithCount.map((entry) => (
