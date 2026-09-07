@@ -1,43 +1,15 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import Header from "./components/Header";
-import StatCard from "./components/StatCard";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
 import PersonSummary from "./components/PersonSummary";
 import AddTask from "./components/AddTask";
 
-interface Task {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
-}
-
-interface User {
-  id: number;
-  name: string;
-}
-
-type FilterStatus = "all" | "completed" | "pending";
-
-const TASKS_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
-
-const USERS_URL = "https://jsonplaceholder.typicode.com/users";
-
-async function fetchTasks(): Promise<Task[]> {
-  const response = await fetch(TASKS_URL);
-  const tasks = (await response.json()) as Task[];
-
-  return tasks;
-}
-
-async function fetchUsers(): Promise<User[]> {
-  const response = await fetch(USERS_URL);
-  const users = (await response.json()) as User[];
-
-  return users;
-}
+import { Task, User, FilterStatus } from "./types";
+import { fetchTasks, fetchUsers } from "./api";
+import StatsBar from "./components/StatsBar";
+import FilterButtons from "./components/FilterButtons";
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
@@ -61,16 +33,8 @@ function App() {
     return "Unknown person";
   }
 
-  function handleShowAll() {
-    setCurrentFilter("all");
-  }
-
-  function handleShowCompleted() {
-    setCurrentFilter("completed");
-  }
-
-  function handleShowPending() {
-    setCurrentFilter("pending");
+  function handleFilterChange(filter: FilterStatus) {
+    setCurrentFilter(filter);
   }
 
   function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
@@ -198,7 +162,6 @@ function App() {
   }
 
   useEffect(() => {
-    console.log("------------------- Use Effect -------------------");
     loadTasksData();
     loadUsers();
   }, []);
@@ -208,38 +171,16 @@ function App() {
       <Header />
 
       <main className="container">
-        <section className="stats">
-          <StatCard label="Total Tasks" value={totalCount} />
-          <StatCard label="Completed" value={completedCount} />
-          <StatCard label="Pending" value={pendingCount} />
-        </section>
+        <StatsBar
+          total={totalCount}
+          completed={completedCount}
+          pending={pendingCount}
+        />
 
-        <section className="filters">
-          <button
-            className={
-              "filter-button" + (currentFilter === "all" ? " active" : "")
-            }
-            onClick={handleShowAll}
-          >
-            All
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "completed" ? " active" : "")
-            }
-            onClick={handleShowCompleted}
-          >
-            Completed
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "pending" ? " active" : "")
-            }
-            onClick={handleShowPending}
-          >
-            Pending
-          </button>
-        </section>
+        <FilterButtons
+          currentFilter={currentFilter}
+          onChange={handleFilterChange}
+        />
 
         <section className="search">
           <input
