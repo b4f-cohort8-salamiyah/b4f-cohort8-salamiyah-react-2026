@@ -179,113 +179,6 @@ body {
   background-color: #e08b1a;
 }
 
-/* ---------- Section Title ---------- */
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 2rem 0 1rem;
-  color: #111827;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.section-title::before {
-  display: inline-block;
-  width: 0.35rem;
-  height: 1.6rem;
-  background-color: #2563eb;
-  border-radius: 999px;
-  content: "";
-}
-
-.section-heading {
-  margin: 2rem 0 1rem;
-}
-
-.section-title {
-  margin: 0;
-  color: #1f2937;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.section-subtitle {
-  margin: 0.4rem 0 0;
-  color: #64748b;
-  font-size: 0.95rem;
-}
-
-/* ---------- Name Section ---------- */
-.name-section {
-  margin: 1.5rem 0;
-  padding: 1.25rem;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-}
-
-.name-section label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.name-input {
-  width: 100%;
-  max-width: twentyrem;
-  box-sizing: border-box;
-  padding: 0.75rem 1rem;
-  color: #1f2937;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-}
-
-.name-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.greeting {
-  margin: 1rem 0 0;
-  color: #166534;
-  font-weight: 600;
-}
-
-.people-summary {
-  display: grid;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
-}
-
-.person-summary {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  color: #334155;
-  background-color: #f8fafc;
-  border-left: 4px solid #2563eb;
-  border-radius: 0.5rem;
-}
-
-.toggle-greeting-button {
-  margin: 1rem 0;
-  padding: 0.65rem 1rem;
-  color: #ffffff;
-  background-color: #475569;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.toggle-greeting-button:hover {
-  background-color: #334155;
-}
-
 /* ---------- People summary ---------- */
 
 .people-summary {
@@ -330,7 +223,6 @@ body {
   margin-top: 20px;
   text-align: center;
 }
-
 
 /* ---------- Small screens ---------- */
 
@@ -435,9 +327,40 @@ body {
   font-size: 14px;
   padding: 6px 10px;
 }
+
 .form-error {
   color: #c0392b;
   font-size: 13px;
   margin-top: 8px;
   width: 100%;
+}
+
+.message {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  color: #6b7280;
+  margin-top: 20px;
+  padding: 24px;
+  text-align: center;
+}
+
+.message.error {
+  border-color: #f0d7d3;
+  color: #c0392b;
+}
+
+.retry-button {
+  background-color: #3b6ef5;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 8px 16px;
+}
+
+.retry-button:hover {
+  background-color: #2f5cd6;
 }

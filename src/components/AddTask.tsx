@@ -1,9 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-}
+import { User } from "../types";
 
 interface AddTaskProps {
   defaultUserId: number;
@@ -11,12 +7,12 @@ interface AddTaskProps {
   onAddTask: (title: string, userId: number) => void;
 }
 
-const MAX_TITLE_LENGTH = 50;
+const MAX_TITLE_LENGTH = 200;
 
-function AddTask(props: AddTaskProps) {
+function AddTask({ defaultUserId, users, onAddTask }: AddTaskProps) {
   const [draftUserId, setDraftUserId] = useState(0);
   const [draftTitle, setDraftTitle] = useState("");
-  const [error, setError] = useState("");
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -31,20 +27,21 @@ function AddTask(props: AddTaskProps) {
 
     const trimmedTitle = draftTitle.trim();
 
-    if (trimmedTitle === "") {
-      setError("Title can't be empty.");
-      return;
-    }
-    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
-      setError(`Title can't be longer than ${MAX_TITLE_LENGTH} characters.`);
+    if (!trimmedTitle) {
+      setFormError("Title can't be empty.");
       return;
     }
 
-    props.onAddTask(trimmedTitle, draftUserId);
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    onAddTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
-    setDraftUserId(props.defaultUserId);
-    setError("");
+    setDraftUserId(defaultUserId);
+    setFormError("");
   }
 
   return (
@@ -62,22 +59,16 @@ function AddTask(props: AddTaskProps) {
         value={draftUserId}
         onChange={handleUserChange}
       >
-        <option value={props.defaultUserId}>Select user</option>
-
-        {props.users.map((user) => {
-          return (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          );
+        <option value={defaultUserId}>Select user</option>
+        {users.map((user) => {
+          return <option value={user.id}>{user.name}</option>;
         })}
       </select>
 
       <button className="add-task-button" type="submit">
         Add Task
       </button>
-
-      {error ? <p className="form-error">{error}</p> : null}
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }

@@ -11,16 +11,23 @@ interface TaskItemProps {
   onSaveEdit: (id: number, title: string) => void;
 }
 
-const MAX_TITLE_LENGTH = 50;
+const MAX_TITLE_LENGTH = 200;
 
-function TaskItem(props: TaskItemProps) {
-  const [editTitle, setEditTitle] = useState(props.title);
+function TaskItem({
+  id,
+  title,
+  ownerName,
+  statusText,
+  statusClass,
+  onToggle,
+  onDelete,
+  onSaveEdit,
+}: TaskItemProps) {
+  const [editTitle, setEditTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState("");
+  const [editError, setEditError] = useState("");
 
   function handleEditClick() {
-    setEditTitle(props.title);
-    setError("");
     setIsEditing(true);
   }
 
@@ -30,25 +37,26 @@ function TaskItem(props: TaskItemProps) {
 
   function handleCancelClick() {
     setIsEditing(false);
-    setError("");
+    setEditError("");
   }
 
   function handleSaveClick() {
     const newTitle = editTitle.trim();
 
     if (newTitle === "") {
-      setError("Title can't be empty.");
+      setEditError("Title can't be empty.");
       return;
     }
 
     if (newTitle.length > MAX_TITLE_LENGTH) {
-      setError(`Title can't be longer than ${MAX_TITLE_LENGTH} characters.`);
+      setEditError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
       return;
     }
 
-    props.onSaveEdit(props.id, newTitle);
+    onSaveEdit(id, newTitle);
+
+    setEditError("");
     setIsEditing(false);
-    setError("");
   }
 
   if (isEditing) {
@@ -61,8 +69,6 @@ function TaskItem(props: TaskItemProps) {
           onChange={handleChangeTitle}
         />
 
-        {error ? <p className="form-error">{error}</p> : null}
-
         <span className="task-actions">
           <button
             className="task-action-button save-button"
@@ -70,10 +76,10 @@ function TaskItem(props: TaskItemProps) {
           >
             Save
           </button>
-
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
+          {editError !== "" && <p className="form-error">{editError}</p>}
         </span>
       </li>
     );
@@ -82,31 +88,20 @@ function TaskItem(props: TaskItemProps) {
   return (
     <li className="task-item">
       <span className="task-text">
-        <span className="task-title">{props.title}</span>
-        <span className="task-user">{props.ownerName}</span>
+        <span className="task-title">{title}</span>
+        <span className="task-user">{ownerName}</span>
       </span>
-
-      <span className={`task-status ${props.statusClass}`}>
-        {props.statusText}
-      </span>
-
+      <span className={`task-status ${statusClass}`}>{statusText}</span>
       <span className="task-actions">
-        <button
-          className="task-action-button"
-          onClick={() => props.onToggle(props.id)}
-        >
-          {props.statusClass === "completed"
-            ? "Mark Pending"
-            : "Mark Completed"}
+        <button className="task-action-button" onClick={() => onToggle(id)}>
+          {statusClass === "completed" ? "Mark Pending" : "Mark Completed"}
         </button>
-
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
-
         <button
           className="task-action-button delete-button"
-          onClick={() => props.onDelete(props.id)}
+          onClick={() => onDelete(id)}
         >
           Delete
         </button>
