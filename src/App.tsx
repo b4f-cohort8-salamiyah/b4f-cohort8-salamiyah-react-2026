@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { ChangeEvent } from "react";
 import { Task, User, FilterStatus } from "./types";
 import { fetchTasks, fetchUsers } from "./api";
 import Header from "./components/Header";
@@ -9,6 +8,7 @@ import PersonSummary from "./components/PersonSummary";
 import AddTask from "./components/AddTask";
 import StatsBar from "./components/StatsBar";
 import FilterButtons from "./components/FilterButtons";
+import SearchInput from "./components/SearchInput";
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
@@ -38,8 +38,8 @@ function App() {
     setCurrentFilter(filter);
   }
 
-  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
-    setSearchText(event.target.value);
+  function handleSearchChange(value: string) {
+    setSearchText(value);
   }
 
   function handleSelectedPerson(userId: number) {
@@ -182,15 +182,7 @@ function App() {
 
         <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
 
-        <section className="search">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search tasks..."
-            value={searchText}
-            onChange={handleSearchChange}
-          />
-        </section>
+        <SearchInput value={searchText} onChange={handleSearchChange} />
 
         <SectionTitle
           title="Your Tasks"
@@ -213,16 +205,6 @@ function App() {
         )}
 
         <section className="people-summary">
-          {peopleWithCount.map((entry) => (
-            <PersonSummary
-              key={entry.user.id}
-              name={entry.user.name}
-              taskCount={entry.count}
-            />
-          ))}
-        </section>
-
-        <section className="filters">
           <button
             className={
               "filter-button" + (selectedUserId === 0 ? " active" : "")
@@ -231,17 +213,23 @@ function App() {
           >
             All people
           </button>
-
           {peopleWithCount.map((entry) => (
-            <button
+            <PersonSummary
+              id={entry.user.id}
               key={entry.user.id}
-              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
-              onClick={() => handleSelectedPerson(entry.user.id)}
-            >
-              {entry.user.name} - ({entry.count})
-            </button>
+              name={entry.user.name}
+              taskCount={entry.count}
+              selectedUserId={selectedUserId}
+              onUserChange={handleSelectedPerson}
+            />
           ))}
         </section>
+
+        {/* <section className="filters">
+          {peopleWithCount.map((entry) => (
+            
+          ))}
+        </section> */}
 
         {isLoadingTasks && <p className="message">Loading tasks...</p>}
 
