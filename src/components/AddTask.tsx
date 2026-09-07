@@ -1,9 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-}
+import { User } from "../types";
 
 interface AddTaskProps {
   selectedUserId: number;
@@ -13,7 +9,7 @@ interface AddTaskProps {
 
 const MAX_TITLE_LENGTH = 200;
 
-function AddTask(props: AddTaskProps) {
+function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
   const [formError, setFormError] = useState("");
@@ -40,10 +36,10 @@ function AddTask(props: AddTaskProps) {
       return;
     }
 
-    props.addNewTask(trimmedTitle, draftUserId);
+    addNewTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
-    setDraftUserId(props.selectedUserId);
+    setDraftUserId(selectedUserId);
     setFormError("");
   }
 
@@ -62,8 +58,8 @@ function AddTask(props: AddTaskProps) {
         className="add-task-select"
         onChange={handleUserChange}
       >
-        <option value={props.selectedUserId}>Select user</option>
-        {props.users.map((user) => (
+        <option value={selectedUserId}>Select user</option>
+        {users.map((user) => (
           <option key={user.id} value={user.id}>
             {user.name}
           </option>
