@@ -1,9 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-}
+import { User } from "../types";
 
 interface AddTaskProps {
   selectedUserId: number;
@@ -11,9 +7,12 @@ interface AddTaskProps {
   addNewTask: (title: string, userId: number) => void;
 }
 
-function AddTask(props: AddTaskProps) {
+const MAX_TITLE_LENGTH = 200;
+
+function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -25,10 +24,23 @@ function AddTask(props: AddTaskProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    props.addNewTask(draftTitle, draftUserId);
+    const trimmedTitle = draftTitle.trim();
+
+    if (trimmedTitle === "") {
+      setFormError("Title can't be empty.");
+      return;
+    }
+
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    addNewTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
-    setDraftUserId(props.selectedUserId);
+    setDraftUserId(selectedUserId);
+    setFormError("");
   }
 
   return (
@@ -46,8 +58,8 @@ function AddTask(props: AddTaskProps) {
         className="add-task-select"
         onChange={handleUserChange}
       >
-        <option value={props.selectedUserId}>Select user</option>
-        {props.users.map((user) => (
+        <option value={selectedUserId}>Select user</option>
+        {users.map((user) => (
           <option key={user.id} value={user.id}>
             {user.name}
           </option>
@@ -57,6 +69,8 @@ function AddTask(props: AddTaskProps) {
       <button type="submit" className="add-task-button">
         Add Task
       </button>
+
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }
