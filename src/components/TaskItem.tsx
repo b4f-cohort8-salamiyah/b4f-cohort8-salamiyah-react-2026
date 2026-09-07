@@ -13,8 +13,17 @@ interface TaskItemProps {
 
 const MAX_TITLE_LENGTH = 200;
 
-function TaskItem(props: TaskItemProps) {
-  const [editTitle, setEditTitle] = useState(props.title);
+function TaskItem({
+  id,
+  title,
+  ownerName,
+  statusText,
+  statusClass,
+  onToggle,
+  onDelete,
+  onSaveEdit,
+}: TaskItemProps) {
+  const [editTitle, setEditTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
   const [editError, setEditError] = useState("");
 
@@ -44,7 +53,7 @@ function TaskItem(props: TaskItemProps) {
       return;
     }
 
-    props.onSaveEdit(props.id, newTitle);
+    onSaveEdit(id, newTitle);
 
     setEditError("");
     setIsEditing(false);
@@ -79,27 +88,20 @@ function TaskItem(props: TaskItemProps) {
   return (
     <li className="task-item">
       <span className="task-text">
-        <span className="task-title">{props.title}</span>
-        <span className="task-user">{props.ownerName}</span>
+        <span className="task-title">{title}</span>
+        <span className="task-user">{ownerName}</span>
       </span>
-      <span className={`task-status ${props.statusClass}`}>
-        {props.statusText}
-      </span>
+      <span className={`task-status ${statusClass}`}>{statusText}</span>
       <span className="task-actions">
-        <button
-          className="task-action-button"
-          onClick={() => props.onToggle(props.id)}
-        >
-          {props.statusClass === "completed"
-            ? "Mark Pending"
-            : "Mark Completed"}
+        <button className="task-action-button" onClick={() => onToggle(id)}>
+          {statusClass === "completed" ? "Mark Pending" : "Mark Completed"}
         </button>
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
         <button
           className="task-action-button delete-button"
-          onClick={() => props.onDelete(props.id)}
+          onClick={() => onDelete(id)}
         >
           Delete
         </button>
