@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { ChangeEvent } from "react";
 import Header from "./components/Header";
 import TaskItem from "./components/TaskItem";
 import SectionTitle from "./components/SectionTitle";
