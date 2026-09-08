@@ -1,25 +1,56 @@
 import { useEffect, useState } from "react";
-import Header from "./components/Header";
-import TaskItem from "./components/TaskItem";
-import SectionTitle from "./components/SectionTitle";
-import PersonSummary from "./components/PersonSummary";
-import AddTask from "./components/AddTask";
-
-import { Task, User, FilterStatus } from "./types";
+import type { FilterStatus, Task, User } from "./types";
 import { fetchTasks, fetchUsers } from "./api";
+import Header from "./components/Header";
 import StatsBar from "./components/StatsBar";
-import FilterButtons from "./components/FilterButtons";
-import SearchInput from "./components/SearchInput";
+import Controls from "./components/Controls";
+import SectionTitle from "./components/SectionTitle";
+import PeopleSummary from "./components/PeopleSummary";
+import AddTask from "./components/AddTask";
+import TaskList from "./components/TaskList";
+import EmptyState from "./components/EmptyState";
+import ProgressText from "./components/ProgressText";
 
 function App() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [hasTaskError, setHasTaskError] = useState(false);
   const [hasUsersError, setHasUsersError] = useState(false);
+
+  async function loadTasksData() {
+    setIsLoadingTasks(true);
+    setHasTaskError(false);
+
+    try {
+      const data = await fetchTasks();
+      setTasks(data);
+      setIsLoadingTasks(false);
+    } catch {
+      setHasTaskError(true);
+      setIsLoadingTasks(false);
+    }
+  }
+
+  async function loadUsersData() {
+    setHasUsersError(false);
+
+    try {
+      const data = await fetchUsers();
+      setUsers(data);
+    } catch {
+      setHasUsersError(true);
+    }
+  }
+
+  useEffect(() => {
+    loadTasksData();
+    loadUsersData();
+  }, []);
 
   function getOwnerName(userId: number): string {
     const user = users.find(function (user) {
@@ -41,7 +72,7 @@ function App() {
     setSearchText(value);
   }
 
-  function handleSelectedPerson(userId: number): void {
+  function handleSelectPerson(userId: number) {
     setSelectedUserId(userId);
   }
 
@@ -84,24 +115,21 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
-  const peopleWithCount = users
-    .map((user) => {
-      const count = tasks.filter((task) => task.userId === user.id).length;
-      return { user, count };
-    })
-    .filter((entry) => entry.count > 0);
+  const unavailableUsers = users.length === 0;
 
-  function addNewTask(title: string, userId: number): void {
+  function handleAddTask(title: string, userId: number): void {
     const newTask: Task = {
-      id: tasks.length + 1,
+      // Corrected id generation: the actual classroom used `tasks.length + 1`,
+      // which can collide with an existing task's id after a non-last-task
+      // deletion. Date.now() is the same technique already taught since
+      // Session 08 — this is a correctness fix, not a new concept.
+      id: Date.now(),
       userId: userId,
       title: title.trim(),
       completed: false,
     };
 
-    const newTasks = [...tasks, newTask];
-
-    setTasks(newTasks);
+    setTasks([...tasks, newTask]);
   }
 
   function handleToggle(id: number): void {
@@ -116,15 +144,24 @@ function App() {
     setTasks(updatedTasks);
   }
 
-  function handleDeleted(id: number): void {
+  function handleDelete(id: number): void {
+    const confirmed = window.confirm("Delete this task?");
+    if (!confirmed) {
+      return;
+    }
+
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   }
 
-  function handleSaveEdit(id: number, newTitle: string): void {
+  function handleSaveEdit(
+    id: number,
+    newTitle: string,
+    newUserId: number,
+  ): void {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
-        return { ...task, title: newTitle };
+        return { ...task, title: newTitle, userId: newUserId };
       }
 
       return task;
@@ -133,41 +170,14 @@ function App() {
     setTasks(updatedTasks);
   }
 
-  async function loadTasksData() {
-    setIsLoadingTasks(true);
-    setHasTaskError(false);
-
-    try {
-      const _tasks = await fetchTasks();
-      setTasks(_tasks);
-      console.log(_tasks);
-      setIsLoadingTasks(false);
-    } catch (error) {
-      console.log(error);
-      setHasTaskError(true);
-      setIsLoadingTasks(false);
-    }
+  function handleReset() {
+    setCurrentFilter("all");
+    setSearchText("");
+    setSelectedUserId(0);
   }
-
-  async function loadUsers() {
-    setHasUsersError(false);
-
-    try {
-      const _users = await fetchUsers();
-      setUsers(_users);
-    } catch (error) {
-      setHasUsersError(true);
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    loadTasksData();
-    loadUsers();
-  }, []);
 
   return (
-    <div>
+    <>
       <Header />
 
       <main className="container">
@@ -177,58 +187,50 @@ function App() {
           pending={pendingCount}
         />
 
-        <FilterButtons
+        <Controls
           currentFilter={currentFilter}
-          onChange={handleFilterChange}
+          onFilterChange={handleFilterChange}
+          searchText={searchText}
+          onSearchChange={handleSearchChange}
+          visibleCount={visibleTasks.length}
+          totalCount={tasks.length}
+          onReset={handleReset}
         />
 
-        <SearchInput value={searchText} onChange={handleSearchChange} />
+        {unavailableUsers ? (
+          hasUsersError ? (
+            <div className="add-task-placeholder message error">
+              <p>People data unavailable — cannot add a task right now.</p>
+              <button className="retry-button" onClick={loadUsersData}>
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="add-task-placeholder message">
+              <p>Loading people...</p>
+            </div>
+          )
+        ) : (
+          <AddTask
+            selectedUserId={selectedUserId}
+            users={users}
+            onAddTask={handleAddTask}
+          />
+        )}
+
+        <PeopleSummary
+          users={users}
+          tasks={tasks}
+          selectedUserId={selectedUserId}
+          onSelectPerson={handleSelectPerson}
+          hasUsersError={hasUsersError}
+          onRetryUsers={loadUsersData}
+        />
 
         <SectionTitle
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
-
-        {users.length === 0 && !hasUsersError && (
-          <p className="message">Loading people...</p>
-        )}
-
-        {hasUsersError && (
-          <div className="message error">
-            <p>
-              We could not load the people list. Please check your internet
-              connection and try again.
-            </p>
-            <button className="retry-button" onClick={loadUsers}>
-              Retry
-            </button>
-          </div>
-        )}
-
-        <section className="people-summary">
-          <button
-            className={
-              "filter-button" + (selectedUserId === 0 ? " active" : "")
-            }
-            onClick={() => handleSelectedPerson(0)}
-          >
-            All people
-          </button>
-          {peopleWithCount.map((entry) => {
-            return (
-              <PersonSummary
-                key={entry.user.id}
-                id={entry.user.id}
-                name={entry.user.name}
-                taskCount={entry.count}
-                selectedUserId={selectedUserId}
-                onChangePerson={handleSelectedPerson}
-              />
-            );
-          })}
-        </section>
-
-        <AddTask selectedUserId={0} users={users} addNewTask={addNewTask} />
 
         {isLoadingTasks && <p className="message">Loading tasks...</p>}
 
@@ -247,38 +249,22 @@ function App() {
         {!isLoadingTasks &&
           !hasTaskError &&
           (visibleTasks.length === 0 ? (
-            <p className="empty-state">No tasks to show.</p>
+            <EmptyState />
           ) : (
-            <ul className="task-list">
-              {visibleTasks.map((task) => {
-                const statusText = task.completed ? "Completed" : "Pending";
-                const statusClass = task.completed ? "completed" : "pending";
-
-                return (
-                  <TaskItem
-                    key={task.id}
-                    id={task.id}
-                    title={task.title}
-                    ownerName={getOwnerName(task.userId)}
-                    statusText={statusText}
-                    statusClass={statusClass}
-                    onToggle={handleToggle}
-                    onDelete={handleDeleted}
-                    onSaveEdit={handleSaveEdit}
-                  />
-                );
-              })}
-            </ul>
+            <TaskList
+              tasks={visibleTasks}
+              users={users}
+              unavailableUsers={unavailableUsers}
+              getOwnerName={getOwnerName}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+              onSaveEdit={handleSaveEdit}
+            />
           ))}
 
-        <p className="visible-count">
-          {visibleTasks.length} of {tasks.length} tasks shown
-        </p>
-        <p className="progress">
-          {completedCount} of {totalCount} tasks completed
-        </p>
+        <ProgressText completed={completedCount} total={totalCount} />
       </main>
-    </div>
+    </>
   );
 }
 

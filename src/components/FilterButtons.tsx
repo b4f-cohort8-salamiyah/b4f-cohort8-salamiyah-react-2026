@@ -1,4 +1,4 @@
-import { FilterStatus } from "../types";
+import type { FilterStatus } from "../types";
 
 interface FilterButtonsProps {
   currentFilter: FilterStatus;
