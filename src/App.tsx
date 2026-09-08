@@ -68,6 +68,20 @@ function App() {
     return "Unknown person";
   }
 
+  function resetSelectedPersonIfNowEmpty(updatedTasks: Task[]) {
+    if (selectedUserId === 0) {
+      return;
+    }
+
+    const matchingTask = updatedTasks.find(
+      (task) => task.userId === selectedUserId,
+    );
+
+    if (!matchingTask) {
+      setSelectedUserId(0);
+    }
+  }
+
   function handleFilterChange(filter: FilterStatus) {
     setCurrentFilter(filter);
   }
@@ -163,6 +177,7 @@ function App() {
 >>>>>>> origin/group-1
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
+    resetSelectedPersonIfNowEmpty(updatedTasks);
   }
 
   function handleSaveEdit(
@@ -179,6 +194,7 @@ function App() {
     });
 
     setTasks(updatedTasks);
+    resetSelectedPersonIfNowEmpty(updatedTasks);
   }
 
 <<<<<<< HEAD
