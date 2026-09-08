@@ -156,6 +156,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 3;
 }
 
 .task-user {
@@ -192,11 +193,6 @@ body {
   margin-bottom: 20px;
 }
 
-.person-summary {
-  color: #1f2430;
-  font-size: 14px;
-}
-
 /* ---------- Derived counts / progress ---------- */
 
 .visible-count {
@@ -213,9 +209,6 @@ body {
 }
 
 /* ---------- Empty state ---------- */
-/* Instructor-provided styling for the homework's empty-result message.
-   Unused until that message's JSX is added (STRETCH homework); this
-   comment is not a hint about where/how to add it. */
 
 .empty-state {
   color: #6b7280;
@@ -239,6 +232,8 @@ body {
     flex-wrap: wrap;
   }
 }
+
+/* ---------- Add task form ---------- */
 
 .add-task-form {
   display: flex;
@@ -283,9 +278,13 @@ body {
   background-color: #2f5cd6;
 }
 
+/* ---------- Task item actions ---------- */
+
 .task-actions {
   display: flex;
+  justify-content: center;
   gap: 8px;
+  flex: 1;
 }
 
 .task-action-button {
@@ -335,6 +334,8 @@ body {
   width: 100%;
 }
 
+/* ---------- Loading / error messages ---------- */
+
 .message {
   background-color: #ffffff;
   border: 1px solid #e2e5ea;
@@ -363,4 +364,39 @@ body {
 
 .retry-button:hover {
   background-color: #2f5cd6;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.controls-row .visible-count {
+  margin-top: 0;
+}
+
+.reset-button {
+  background-color: #f1f3f7;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 14px;
+}
+
+.reset-button:hover {
+  border-color: #3b6ef5;
+}
+
+.edit-owner-select {
+  border: 1px solid #3b6ef5;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 8px;
+  padding: 6px 10px;
 }

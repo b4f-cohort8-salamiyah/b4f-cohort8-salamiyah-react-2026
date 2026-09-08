@@ -1,38 +1,54 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import type { Task, User } from "../types";
+import Badge from "./Badge";
 
 interface TaskItemProps {
-  id: number;
-  title: string;
+  task: Task;
   ownerName: string;
-  statusText: string;
-  statusClass: string;
+  users: User[];
+  usersUnavailable: boolean;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
-  onSaveEdit: (id: number, title: string) => void;
+  onSaveEdit: (id: number, title: string, userId: number) => void;
 }
 
 const MAX_TITLE_LENGTH = 200;
 
 function TaskItem({
-  id,
-  title,
+  task,
   ownerName,
-  statusText,
-  statusClass,
+  users,
+  usersUnavailable,
   onToggle,
   onDelete,
   onSaveEdit,
 }: TaskItemProps) {
-  const [editTitle, setEditTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
+  const [editUserId, setEditUserId] = useState(task.userId);
   const [editError, setEditError] = useState("");
 
   function handleEditClick() {
+    setEditTitle(task.title);
+    setEditError("");
     setIsEditing(true);
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
+  }
+
+  function handleChangeOwner(event: ChangeEvent<HTMLSelectElement>) {
+    setEditUserId(Number(event.target.value));
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      handleSaveClick();
+    } else if (event.key === "Escape") {
+      handleCancelClick();
+    }
   }
 
   function handleCancelClick() {
@@ -53,7 +69,7 @@ function TaskItem({
       return;
     }
 
-    onSaveEdit(id, newTitle);
+    onSaveEdit(task.id, newTitle, editUserId);
 
     setEditError("");
     setIsEditing(false);
@@ -62,12 +78,30 @@ function TaskItem({
   if (isEditing) {
     return (
       <li className="task-item">
-        <input
-          type="text"
-          className="edit-title-input"
-          value={editTitle}
-          onChange={handleChangeTitle}
-        />
+        <span className="task-text">
+          <input
+            type="text"
+            className="edit-title-input"
+            value={editTitle}
+            onChange={handleChangeTitle}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+          <select
+            className="edit-owner-select"
+            value={editUserId}
+            onChange={handleChangeOwner}
+            disabled={usersUnavailable}
+            onKeyDown={handleKeyDown}
+          >
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          {editError !== "" && <p className="form-error">{editError}</p>}
+        </span>
 
         <span className="task-actions">
           <button
@@ -79,7 +113,6 @@ function TaskItem({
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
-          {editError !== "" && <p className="form-error">{editError}</p>}
         </span>
       </li>
     );
@@ -88,20 +121,23 @@ function TaskItem({
   return (
     <li className="task-item">
       <span className="task-text">
-        <span className="task-title">{title}</span>
+        <span className="task-title">{task.title}</span>
         <span className="task-user">{ownerName}</span>
       </span>
-      <span className={`task-status ${statusClass}`}>{statusText}</span>
+      <Badge status={task.completed ? "completed" : "pending"} />
       <span className="task-actions">
-        <button className="task-action-button" onClick={() => onToggle(id)}>
-          {statusClass === "completed" ? "Mark Pending" : "Mark Completed"}
+        <button
+          className="task-action-button"
+          onClick={() => onToggle(task.id)}
+        >
+          {task.completed ? "Mark Pending" : "Mark Completed"}
         </button>
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
         <button
           className="task-action-button delete-button"
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(task.id)}
         >
           Delete
         </button>
