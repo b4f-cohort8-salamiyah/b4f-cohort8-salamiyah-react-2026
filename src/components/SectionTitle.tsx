@@ -3,11 +3,11 @@ interface SectionTitleProps {
   subtitle: string;
 }
 
-function SectionTitle(props: SectionTitleProps) {
+function SectionTitle({ title, subtitle }: SectionTitleProps) {
   return (
     <div className="section-title">
-      <h2>{props.title}</h2>
-      <p>{props.subtitle}</p>
+      <h2>{title}</h2>
+      <p>{subtitle}</p>
     </div>
   );
 }

@@ -1,104 +1,79 @@
-import { useState } from "react";
-import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
+import type { FilterStatus, Task, User } from "./types";
+import { fetchTasks, fetchUsers } from "./api";
 import Header from "./components/Header";
-import StatCard from "./components/StatCard";
-import TaskItem from "./components/TaskItem";
+import StatsBar from "./components/StatsBar";
+import Controls from "./components/Controls";
 import SectionTitle from "./components/SectionTitle";
-import PersonSummary from "./components/PersonSummary";
+import PeopleSummary from "./components/PeopleSummary";
 import AddTask from "./components/AddTask";
-
-interface Task {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
-}
-
-interface User {
-  id: number;
-  name: string;
-}
-
-type FilterStatus = "all" | "completed" | "pending";
-
-const initialTasks: Task[] = [
-  { id: 1, userId: 1, title: "Finish JavaScript exercise", completed: false },
-  { id: 2, userId: 2, title: "Review pull request", completed: true },
-  { id: 3, userId: 3, title: "Write session notes", completed: false },
-  { id: 4, userId: 1, title: "Update project README", completed: true },
-  { id: 5, userId: 2, title: "Fix search bug", completed: false },
-  { id: 6, userId: 3, title: "Plan sprint review", completed: true },
-];
-
-const users: User[] = [
-  { id: 1, name: "Leanne Graham" },
-  { id: 2, name: "Ervin Howell" },
-  { id: 3, name: "Clementine Bauch" },
-  {
-    id: 4,
-    name: "Patricia Lebsack",
-  },
-  {
-    id: 5,
-    name: "Chelsey Dietrich",
-  },
-  {
-    id: 6,
-    name: "Mrs. Dennis Schulist",
-  },
-  {
-    id: 7,
-    name: "Kurtis Weissnat",
-  },
-  {
-    id: 8,
-    name: "Nicholas Runolfsdottir V",
-  },
-  {
-    id: 9,
-    name: "Glenna Reichert",
-  },
-  {
-    id: 10,
-    name: "Clementina DuBuque",
-  },
-];
-
-function getOwnerName(userId: number): string {
-  const user = users.find(function (user) {
-    return user.id === userId;
-  });
-
-  if (user) {
-    return user.name;
-  }
-
-  return "Unknown person";
-}
+import TaskList from "./components/TaskList";
+import EmptyState from "./components/EmptyState";
+import ProgressText from "./components/ProgressText";
 
 function App() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
   const [searchText, setSearchText] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(0);
-  const [tasks, setTasks] = useState(initialTasks);
 
-  function handleShowAll() {
-    setCurrentFilter("all");
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+  const [hasTaskError, setHasTaskError] = useState(false);
+  const [hasUsersError, setHasUsersError] = useState(false);
+
+  async function loadTasksData() {
+    setIsLoadingTasks(true);
+    setHasTaskError(false);
+
+    try {
+      const data = await fetchTasks();
+      setTasks(data);
+      setIsLoadingTasks(false);
+    } catch {
+      setHasTaskError(true);
+      setIsLoadingTasks(false);
+    }
   }
 
-  function handleShowCompleted() {
-    setCurrentFilter("completed");
+  async function loadUsersData() {
+    console.log("Loading users");
+    setHasUsersError(false);
+
+    try {
+      const data = await fetchUsers();
+      setUsers(data);
+    } catch {
+      setHasUsersError(true);
+    }
   }
 
-  function handleShowPending() {
-    setCurrentFilter("pending");
+  useEffect(() => {
+    loadTasksData();
+    loadUsersData();
+  }, []);
+
+  function getOwnerName(userId: number): string {
+    const user = users.find(function (user) {
+      return user.id === userId;
+    });
+
+    if (user) {
+      return user.name;
+    }
+
+    return "Unknown person";
   }
 
-  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
-    setSearchText(event.target.value);
+  function handleFilterChange(filter: FilterStatus) {
+    setCurrentFilter(filter);
   }
 
-  function handleSelectedPerson(userId: number) {
+  function handleSearchChange(value: string) {
+    setSearchText(value);
+  }
+
+  function handleSelectPerson(userId: number) {
     setSelectedUserId(userId);
   }
 
@@ -141,26 +116,24 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
-  const peopleWithCount = users
-    .map((user) => {
-      const count = tasks.filter((task) => task.userId === user.id).length;
-      return { user, count };
-    })
-    .filter((entry) => entry.count > 0);
+  const usersUnavailable = users.length === 0;
 
-  function addNewTask(title: string, userId: number): void {
-    const draftTask: Task = {
-      id: tasks.length + 1,
+  function handleAddTask(title: string, userId: number): void {
+    const newTask: Task = {
+      // Corrected id generation: the actual classroom used `tasks.length + 1`,
+      // which can collide with an existing task's id after a non-last-task
+      // deletion. Date.now() is the same technique already taught since
+      // Session 08 — this is a correctness fix, not a new concept.
+      id: Date.now(),
       userId: userId,
       title: title.trim(),
       completed: false,
     };
 
-    const newTasks = [...tasks, draftTask];
-    setTasks(newTasks);
+    setTasks([...tasks, newTask]);
   }
 
-  function handleToggleTask(id: number): void {
+  function handleToggle(id: number): void {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
         return { ...task, completed: !task.completed };
@@ -172,15 +145,25 @@ function App() {
     setTasks(updatedTasks);
   }
 
-  function handleDeleteTask(id: number): void {
+  function handleDelete(id: number): void {
+    const confirmed = window.confirm("Delete this task?");
+
+    if (!confirmed) {
+      return;
+    }
+
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   }
 
-  function handleSaveEdit(id: number, newTitle: string): void {
+  function handleSaveEdit(
+    id: number,
+    newTitle: string,
+    newUserId: number,
+  ): void {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
-        return { ...task, title: newTitle };
+        return { ...task, title: newTitle, userId: newUserId };
       }
 
       return task;
@@ -189,125 +172,101 @@ function App() {
     setTasks(updatedTasks);
   }
 
+  function handleReset() {
+    setCurrentFilter("all");
+    setSearchText("");
+    setSelectedUserId(0);
+  }
+
   return (
-    <div>
+    <>
       <Header />
 
       <main className="container">
-        <section className="stats">
-          <StatCard label="Total Tasks" value={totalCount} />
-          <StatCard label="Completed" value={completedCount} />
-          <StatCard label="Pending" value={pendingCount} />
-        </section>
+        <StatsBar
+          total={totalCount}
+          completed={completedCount}
+          pending={pendingCount}
+        />
 
-        <section className="filters">
-          <button
-            className={
-              "filter-button" + (currentFilter === "all" ? " active" : "")
-            }
-            onClick={handleShowAll}
-          >
-            All
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "completed" ? " active" : "")
-            }
-            onClick={handleShowCompleted}
-          >
-            Completed
-          </button>
-          <button
-            className={
-              "filter-button" + (currentFilter === "pending" ? " active" : "")
-            }
-            onClick={handleShowPending}
-          >
-            Pending
-          </button>
-        </section>
+        <Controls
+          currentFilter={currentFilter}
+          onFilterChange={handleFilterChange}
+          searchText={searchText}
+          onSearchChange={handleSearchChange}
+          visibleCount={visibleTasks.length}
+          totalCount={tasks.length}
+          onReset={handleReset}
+        />
 
-        <AddTask defaultUserId={0} users={users} onAddTask={addNewTask} />
-
-        <section className="search">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search tasks..."
-            value={searchText}
-            onChange={handleSearchChange}
+        {usersUnavailable ? (
+          hasUsersError ? (
+            <div className="add-task-placeholder message error">
+              <p>People data unavailable — cannot add a task right now.</p>
+              <button className="retry-button" onClick={loadUsersData}>
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="add-task-placeholder message">
+              <p>Loading people ...</p>
+            </div>
+          )
+        ) : (
+          <AddTask
+            selectedUserId={selectedUserId}
+            users={users}
+            onAddTask={handleAddTask}
           />
-        </section>
+        )}
+
+        <PeopleSummary
+          users={users}
+          tasks={tasks}
+          selectedUserId={selectedUserId}
+          onSelectPerson={handleSelectPerson}
+          hasUsersError={hasUsersError}
+          onRetryUsers={loadUsersData}
+        />
 
         <SectionTitle
           title="Your Tasks"
           subtitle="Everything on your plate right now."
         />
 
-        <section className="people-summary">
-          {peopleWithCount.map((entry) => (
-            <PersonSummary
-              key={entry.user.id}
-              name={entry.user.name}
-              taskCount={entry.count}
-            />
-          ))}
-        </section>
+        {isLoadingTasks && <p className="message">Loading tasks...</p>}
 
-        <section className="filters">
-          <button
-            className={
-              "filter-button" + (selectedUserId === 0 ? " active" : "")
-            }
-            onClick={() => handleSelectedPerson(0)}
-          >
-            All people
-          </button>
-
-          {peopleWithCount.map((entry) => (
-            <button
-              key={entry.user.id}
-              className={`filter-button ${selectedUserId === entry.user.id ? "active" : ""}`}
-              onClick={() => handleSelectedPerson(entry.user.id)}
-            >
-              {entry.user.name} - ({entry.count})
+        {!isLoadingTasks && hasTaskError && (
+          <div className="message error">
+            <p>
+              We could not load the tasks. Please check your internet connection
+              and try again.
+            </p>
+            <button className="retry-button" onClick={loadTasksData}>
+              Retry
             </button>
-          ))}
-        </section>
-
-        {visibleTasks.length > 0 ? (
-          <ul className="task-list">
-            {visibleTasks.map((task) => {
-              const statusText = task.completed ? "Completed" : "Pending";
-              const statusClass = task.completed ? "completed" : "pending";
-
-              return (
-                <TaskItem
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  ownerName={getOwnerName(task.userId)}
-                  statusText={statusText}
-                  statusClass={statusClass}
-                  onToggle={handleToggleTask}
-                  onDelete={handleDeleteTask}
-                  onSaveEdit={handleSaveEdit}
-                />
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="empty-state">No tasks to show.</p>
+          </div>
         )}
 
-        <p className="visible-count">
-          {visibleTasks.length} of {tasks.length} tasks shown
-        </p>
-        <p className="progress">
-          {completedCount} of {totalCount} tasks completed
-        </p>
+        {!isLoadingTasks &&
+          !hasTaskError &&
+          (visibleTasks.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <TaskList
+              tasks={visibleTasks}
+              users={users}
+              usersUnavailable={usersUnavailable}
+              getOwnerName={getOwnerName}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+              onSaveEdit={handleSaveEdit}
+            />
+          ))}
+
+        <ProgressText completed={completedCount} total={totalCount} />
       </main>
-    </div>
+    </>
   );
 }
 
