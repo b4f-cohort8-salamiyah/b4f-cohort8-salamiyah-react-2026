@@ -1,21 +1,13 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import type { ChangeEvent } from "react";
-import type { Task } from "../types";
-=======
 import type { ChangeEvent, KeyboardEvent } from "react";
 import type { Task, User } from "../types";
->>>>>>> origin/group-1
 import Badge from "./Badge";
 
 interface TaskItemProps {
   task: Task;
   ownerName: string;
-<<<<<<< HEAD
-=======
   users: User[];
   usersUnavailable: boolean;
->>>>>>> origin/group-1
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
   onSaveEdit: (id: number, title: string, userId: number) => void;
@@ -23,11 +15,6 @@ interface TaskItemProps {
 
 const MAX_TITLE_LENGTH = 200;
 
-<<<<<<< HEAD
-function TaskItem({ task, ownerName, onToggle, onDelete, onSaveEdit }: TaskItemProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(task.title);
-=======
 function TaskItem({
   task,
   ownerName,
@@ -40,7 +27,6 @@ function TaskItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [editUserId, setEditUserId] = useState(task.userId);
->>>>>>> origin/group-1
   const [editError, setEditError] = useState("");
 
   function handleEditClick() {
@@ -83,11 +69,7 @@ function TaskItem({
       return;
     }
 
-<<<<<<< HEAD
-    onSaveEdit(task.id, newTitle);
-=======
     onSaveEdit(task.id, newTitle, editUserId);
->>>>>>> origin/group-1
 
     setEditError("");
     setIsEditing(false);

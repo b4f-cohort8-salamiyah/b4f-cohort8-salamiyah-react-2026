@@ -37,10 +37,7 @@ function App() {
   }
 
   async function loadUsersData() {
-<<<<<<< HEAD
-=======
     console.log("Loading users");
->>>>>>> origin/group-1
     setHasUsersError(false);
 
     try {
@@ -119,11 +116,8 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
-<<<<<<< HEAD
-=======
   const usersUnavailable = users.length === 0;
 
->>>>>>> origin/group-1
   function handleAddTask(title: string, userId: number): void {
     const newTask: Task = {
       // Corrected id generation: the actual classroom used `tasks.length + 1`,
@@ -152,15 +146,12 @@ function App() {
   }
 
   function handleDelete(id: number): void {
-<<<<<<< HEAD
-=======
     const confirmed = window.confirm("Delete this task?");
 
     if (!confirmed) {
       return;
     }
 
->>>>>>> origin/group-1
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   }
@@ -181,15 +172,12 @@ function App() {
     setTasks(updatedTasks);
   }
 
-<<<<<<< HEAD
-=======
   function handleReset() {
     setCurrentFilter("all");
     setSearchText("");
     setSelectedUserId(0);
   }
 
->>>>>>> origin/group-1
   return (
     <>
       <Header />
@@ -208,15 +196,6 @@ function App() {
           onSearchChange={handleSearchChange}
           visibleCount={visibleTasks.length}
           totalCount={tasks.length}
-<<<<<<< HEAD
-        />
-
-        <AddTask
-          selectedUserId={selectedUserId}
-          users={users}
-          onAddTask={handleAddTask}
-        />
-=======
           onReset={handleReset}
         />
 
@@ -240,7 +219,6 @@ function App() {
             onAddTask={handleAddTask}
           />
         )}
->>>>>>> origin/group-1
 
         <PeopleSummary
           users={users}
@@ -277,11 +255,8 @@ function App() {
           ) : (
             <TaskList
               tasks={visibleTasks}
-<<<<<<< HEAD
-=======
               users={users}
               usersUnavailable={usersUnavailable}
->>>>>>> origin/group-1
               getOwnerName={getOwnerName}
               onToggle={handleToggle}
               onDelete={handleDelete}
