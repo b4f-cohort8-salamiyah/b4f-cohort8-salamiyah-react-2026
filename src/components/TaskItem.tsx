@@ -1,11 +1,11 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
+import type { Task } from "../types";
+import Badge from "./Badge";
 
 interface TaskItemProps {
-  id: number;
-  title: string;
+  task: Task;
   ownerName: string;
-  statusText: string;
-  statusClass: string;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
   onSaveEdit: (id: number, title: string) => void;
@@ -13,12 +13,14 @@ interface TaskItemProps {
 
 const MAX_TITLE_LENGTH = 200;
 
-function TaskItem(props: TaskItemProps) {
-  const [editTitle, setEditTitle] = useState(props.title);
+function TaskItem({ task, ownerName, onToggle, onDelete, onSaveEdit }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
   const [editError, setEditError] = useState("");
 
   function handleEditClick() {
+    setEditTitle(task.title);
+    setEditError("");
     setIsEditing(true);
   }
 
@@ -44,7 +46,7 @@ function TaskItem(props: TaskItemProps) {
       return;
     }
 
-    props.onSaveEdit(props.id, newTitle);
+    onSaveEdit(task.id, newTitle);
 
     setEditError("");
     setIsEditing(false);
@@ -70,8 +72,8 @@ function TaskItem(props: TaskItemProps) {
           <button className="task-action-button" onClick={handleCancelClick}>
             Cancel
           </button>
-          {editError !== "" && <p className="form-error">{editError}</p>}
         </span>
+        {editError !== "" && <p className="form-error">{editError}</p>}
       </li>
     );
   }
@@ -79,27 +81,23 @@ function TaskItem(props: TaskItemProps) {
   return (
     <li className="task-item">
       <span className="task-text">
-        <span className="task-title">{props.title}</span>
-        <span className="task-user">{props.ownerName}</span>
+        <span className="task-title">{task.title}</span>
+        <span className="task-user">{ownerName}</span>
       </span>
-      <span className={`task-status ${props.statusClass}`}>
-        {props.statusText}
-      </span>
+      <Badge status={task.completed ? "completed" : "pending"} />
       <span className="task-actions">
         <button
           className="task-action-button"
-          onClick={() => props.onToggle(props.id)}
+          onClick={() => onToggle(task.id)}
         >
-          {props.statusClass === "completed"
-            ? "Mark Pending"
-            : "Mark Completed"}
+          {task.completed ? "Mark Pending" : "Mark Completed"}
         </button>
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
         <button
           className="task-action-button delete-button"
-          onClick={() => props.onDelete(props.id)}
+          onClick={() => onDelete(task.id)}
         >
           Delete
         </button>

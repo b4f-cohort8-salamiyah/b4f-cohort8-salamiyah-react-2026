@@ -1,21 +1,18 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-}
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import type { User } from "../types";
 
 interface AddTaskProps {
-  defaultUserId: number;
+  selectedUserId: number;
   users: User[];
   onAddTask: (title: string, userId: number) => void;
 }
 
 const MAX_TITLE_LENGTH = 200;
 
-function AddTask(props: AddTaskProps) {
-  const [draftUserId, setDraftUserId] = useState(0);
+function AddTask({ selectedUserId, users, onAddTask }: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
+  const [draftUserId, setDraftUserId] = useState(0);
   const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -31,7 +28,7 @@ function AddTask(props: AddTaskProps) {
 
     const trimmedTitle = draftTitle.trim();
 
-    if (!trimmedTitle) {
+    if (trimmedTitle === "") {
       setFormError("Title can't be empty.");
       return;
     }
@@ -41,10 +38,10 @@ function AddTask(props: AddTaskProps) {
       return;
     }
 
-    props.onAddTask(trimmedTitle, draftUserId);
+    onAddTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
-    setDraftUserId(props.defaultUserId);
+    setDraftUserId(selectedUserId);
     setFormError("");
   }
 
@@ -63,13 +60,15 @@ function AddTask(props: AddTaskProps) {
         value={draftUserId}
         onChange={handleUserChange}
       >
-        <option value={props.defaultUserId}>Select user</option>
-        {props.users.map((user) => {
-          return <option value={user.id}>{user.name}</option>;
-        })}
+        <option value={selectedUserId}>Select user</option>
+        {users.map((user) => (
+          <option key={user.id} value={user.id}>
+            {user.name}
+          </option>
+        ))}
       </select>
 
-      <button className="add-task-button" type="submit">
+      <button type="submit" className="add-task-button">
         Add Task
       </button>
       {formError !== "" && <p className="form-error">{formError}</p>}

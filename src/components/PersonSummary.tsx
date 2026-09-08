@@ -1,13 +1,27 @@
 interface PersonSummaryProps {
+  id: number;
   name: string;
   taskCount: number;
+  selectedUserId: number;
+  onUserChange: (id: number) => void;
 }
 
-function PersonSummary(props: PersonSummaryProps) {
+function PersonSummary({
+  id,
+  name,
+  taskCount,
+  selectedUserId,
+  onUserChange,
+}: PersonSummaryProps) {
   return (
-    <p className="person-summary">
-      {props.name} - {props.taskCount} tasks
-    </p>
+    <>
+      <button
+        className={`filter-button ${selectedUserId === id ? "active" : ""}`}
+        onClick={() => onUserChange(id)}
+      >
+        {name} - ({taskCount})
+      </button>
+    </>
   );
 }
 

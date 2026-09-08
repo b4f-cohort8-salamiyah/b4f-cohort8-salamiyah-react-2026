@@ -192,11 +192,6 @@ body {
   margin-bottom: 20px;
 }
 
-.person-summary {
-  color: #1f2430;
-  font-size: 14px;
-}
-
 /* ---------- Derived counts / progress ---------- */
 
 .visible-count {
@@ -213,9 +208,6 @@ body {
 }
 
 /* ---------- Empty state ---------- */
-/* Instructor-provided styling for the homework's empty-result message.
-   Unused until that message's JSX is added (STRETCH homework); this
-   comment is not a hint about where/how to add it. */
 
 .empty-state {
   color: #6b7280;
@@ -239,6 +231,8 @@ body {
     flex-wrap: wrap;
   }
 }
+
+/* ---------- Add task form ---------- */
 
 .add-task-form {
   display: flex;
@@ -282,6 +276,8 @@ body {
 .add-task-button:hover {
   background-color: #2f5cd6;
 }
+
+/* ---------- Task item actions ---------- */
 
 .task-actions {
   display: flex;
@@ -334,6 +330,8 @@ body {
   margin-top: 8px;
   width: 100%;
 }
+
+/* ---------- Loading / error messages ---------- */
 
 .message {
   background-color: #ffffff;

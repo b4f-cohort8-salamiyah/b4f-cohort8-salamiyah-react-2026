@@ -1,0 +1,33 @@
+import type { FilterStatus } from "../types";
+import FilterButtons from "./FilterButtons";
+import SearchInput from "./SearchInput";
+
+interface ControlsProps {
+  currentFilter: FilterStatus;
+  onFilterChange: (filter: FilterStatus) => void;
+  searchText: string;
+  onSearchChange: (value: string) => void;
+  visibleCount: number;
+  totalCount: number;
+}
+
+function Controls({
+  currentFilter,
+  onFilterChange,
+  searchText,
+  onSearchChange,
+  visibleCount,
+  totalCount,
+}: ControlsProps) {
+  return (
+    <>
+      <FilterButtons currentFilter={currentFilter} onChange={onFilterChange} />
+      <SearchInput value={searchText} onChange={onSearchChange} />
+      <p className="visible-count">
+        {visibleCount} of {totalCount} tasks shown
+      </p>
+    </>
+  );
+}
+
+export default Controls;
