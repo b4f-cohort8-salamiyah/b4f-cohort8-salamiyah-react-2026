@@ -6,6 +6,7 @@ interface PersonSummaryProps {
   onUserChange: (id: number) => void;
 }
 
+<<<<<<< HEAD
 function PersonSummary({
   id,
   name,
@@ -22,6 +23,13 @@ function PersonSummary({
         {name} - ({taskCount})
       </button>
     </>
+=======
+function PersonSummary({ name, taskCount }: PersonSummaryProps) {
+  return (
+    <p className="person-summary">
+      {name} - {taskCount} tasks
+    </p>
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
   );
 }
 

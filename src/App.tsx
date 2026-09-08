@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+<<<<<<< HEAD
+=======
+import type { ChangeEvent } from "react";
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
 import { Task, User, FilterStatus } from "./types";
 import { fetchTasks, fetchUsers } from "./api";
 import Header from "./components/Header";
@@ -8,7 +12,10 @@ import PersonSummary from "./components/PersonSummary";
 import AddTask from "./components/AddTask";
 import StatsBar from "./components/StatsBar";
 import FilterButtons from "./components/FilterButtons";
+<<<<<<< HEAD
 import SearchInput from "./components/SearchInput";
+=======
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
 
 function App() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>("all");
@@ -38,8 +45,13 @@ function App() {
     setCurrentFilter(filter);
   }
 
+<<<<<<< HEAD
   function handleSearchChange(value: string) {
     setSearchText(value);
+=======
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearchText(event.target.value);
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
   }
 
   function handleSelectedPerson(userId: number) {
@@ -203,6 +215,19 @@ function App() {
             </button>
           </div>
         )}
+<<<<<<< HEAD
+=======
+
+        <section className="people-summary">
+          {peopleWithCount.map((entry) => (
+            <PersonSummary
+              key={entry.user.id}
+              name={entry.user.name}
+              taskCount={entry.count}
+            />
+          ))}
+        </section>
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
 
         <section className="people-summary">
           <button
@@ -225,6 +250,7 @@ function App() {
           ))}
         </section>
 
+<<<<<<< HEAD
         {/* <section className="filters">
           {peopleWithCount.map((entry) => (
             
@@ -233,6 +259,10 @@ function App() {
 
         {isLoadingTasks && <p className="message">Loading tasks...</p>}
 
+=======
+        {isLoadingTasks && <p className="message">Loading tasks...</p>}
+
+>>>>>>> 13b877388793c8e3f2f41f2acd69b3a8b48f33bd
         {!isLoadingTasks && hasTaskError && (
           <div className="message error">
             <p>
