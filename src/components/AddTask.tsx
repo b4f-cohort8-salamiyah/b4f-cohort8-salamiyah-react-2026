@@ -1,15 +1,16 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { User } from "../types";
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import type { User } from "../types";
 
 interface AddTaskProps {
   selectedUserId: number;
   users: User[];
-  addNewTask: (title: string, userId: number) => void;
+  onAddTask: (title: string, userId: number) => void;
 }
 
 const MAX_TITLE_LENGTH = 200;
 
-function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
+function AddTask({ selectedUserId, users, onAddTask }: AddTaskProps) {
   const [draftTitle, setDraftTitle] = useState("");
   const [draftUserId, setDraftUserId] = useState(0);
   const [formError, setFormError] = useState("");
@@ -24,6 +25,7 @@ function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
+
     const trimmedTitle = draftTitle.trim();
 
     if (trimmedTitle === "") {
@@ -36,7 +38,7 @@ function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
       return;
     }
 
-    addNewTask(trimmedTitle, draftUserId);
+    onAddTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
     setDraftUserId(selectedUserId);
@@ -54,8 +56,8 @@ function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
       />
 
       <select
-        value={draftUserId}
         className="add-task-select"
+        value={draftUserId}
         onChange={handleUserChange}
       >
         <option value={selectedUserId}>Select user</option>
@@ -69,7 +71,6 @@ function AddTask({ selectedUserId, users, addNewTask }: AddTaskProps) {
       <button type="submit" className="add-task-button">
         Add Task
       </button>
-
       {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
