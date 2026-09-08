@@ -37,6 +37,7 @@ function App() {
   }
 
   async function loadUsersData() {
+    console.log("Loading users");
     setHasUsersError(false);
 
     try {
@@ -115,6 +116,8 @@ function App() {
 
   const pendingCount = totalCount - completedCount;
 
+  const usersUnavailable = users.length === 0;
+
   function handleAddTask(title: string, userId: number): void {
     const newTask: Task = {
       // Corrected id generation: the actual classroom used `tasks.length + 1`,
@@ -143,20 +146,36 @@ function App() {
   }
 
   function handleDelete(id: number): void {
+    const confirmed = window.confirm("Delete this task?");
+
+    if (!confirmed) {
+      return;
+    }
+
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   }
 
-  function handleSaveEdit(id: number, newTitle: string): void {
+  function handleSaveEdit(
+    id: number,
+    newTitle: string,
+    newUserId: number,
+  ): void {
     const updatedTasks = tasks.map((task) => {
       if (task.id === id) {
-        return { ...task, title: newTitle };
+        return { ...task, title: newTitle, userId: newUserId };
       }
 
       return task;
     });
 
     setTasks(updatedTasks);
+  }
+
+  function handleReset() {
+    setCurrentFilter("all");
+    setSearchText("");
+    setSelectedUserId(0);
   }
 
   return (
@@ -177,13 +196,29 @@ function App() {
           onSearchChange={handleSearchChange}
           visibleCount={visibleTasks.length}
           totalCount={tasks.length}
+          onReset={handleReset}
         />
 
-        <AddTask
-          selectedUserId={selectedUserId}
-          users={users}
-          onAddTask={handleAddTask}
-        />
+        {usersUnavailable ? (
+          hasUsersError ? (
+            <div className="add-task-placeholder message error">
+              <p>People data unavailable — cannot add a task right now.</p>
+              <button className="retry-button" onClick={loadUsersData}>
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="add-task-placeholder message">
+              <p>Loading people ...</p>
+            </div>
+          )
+        ) : (
+          <AddTask
+            selectedUserId={selectedUserId}
+            users={users}
+            onAddTask={handleAddTask}
+          />
+        )}
 
         <PeopleSummary
           users={users}
@@ -220,6 +255,8 @@ function App() {
           ) : (
             <TaskList
               tasks={visibleTasks}
+              users={users}
+              usersUnavailable={usersUnavailable}
               getOwnerName={getOwnerName}
               onToggle={handleToggle}
               onDelete={handleDelete}
