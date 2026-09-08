@@ -1,16 +1,20 @@
-import type { Task } from "../types";
+import type { Task, User } from "../types";
 import TaskItem from "./TaskItem";
 
 interface TaskListProps {
   tasks: Task[];
+  users: User[];
+  unavailableUsers: boolean;
   getOwnerName: (userId: number) => string;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
-  onSaveEdit: (id: number, newTitle: string) => void;
+  onSaveEdit: (id: number, newTitle: string, newUserId: number) => void;
 }
 
 function TaskList({
   tasks,
+  users,
+  unavailableUsers,
   getOwnerName,
   onToggle,
   onDelete,
@@ -22,6 +26,8 @@ function TaskList({
         <TaskItem
           key={task.id}
           task={task}
+          users={users}
+          unavailableUsers={unavailableUsers}
           ownerName={getOwnerName(task.userId)}
           onToggle={onToggle}
           onDelete={onDelete}

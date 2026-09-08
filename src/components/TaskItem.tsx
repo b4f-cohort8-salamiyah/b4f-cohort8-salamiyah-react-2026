@@ -1,14 +1,16 @@
 import { useState } from "react";
-import type { ChangeEvent } from "react";
-import type { Task } from "../types";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import type { Task, User } from "../types";
 import Badge from "./Badge";
 
 interface TaskItemProps {
   task: Task;
   ownerName: string;
+  users: User[];
+  unavailableUsers: boolean;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
-  onSaveEdit: (id: number, title: string) => void;
+  onSaveEdit: (id: number, title: string, userId: number) => void;
 }
 
 const MAX_TITLE_LENGTH = 200;
@@ -16,12 +18,15 @@ const MAX_TITLE_LENGTH = 200;
 function TaskItem({
   task,
   ownerName,
+  users,
+  unavailableUsers,
   onToggle,
   onDelete,
   onSaveEdit,
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
+  const [editUserId, setEditUserId] = useState(task.userId);
   const [editError, setEditError] = useState("");
 
   function handleEditClick() {
@@ -32,6 +37,10 @@ function TaskItem({
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
+  }
+
+  function handleChangeOwner(event: ChangeEvent<HTMLSelectElement>) {
+    setEditUserId(Number(event.target.value));
   }
 
   function handleCancelClick() {
@@ -52,21 +61,46 @@ function TaskItem({
       return;
     }
 
-    onSaveEdit(task.id, newTitle);
+    onSaveEdit(task.id, newTitle, editUserId);
 
     setEditError("");
     setIsEditing(false);
   }
 
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      handleSaveClick();
+    } else if (event.key === "Escape") {
+      handleCancelClick();
+    }
+  }
+
   if (isEditing) {
     return (
       <li className="task-item">
-        <input
-          type="text"
-          className="edit-title-input"
-          value={editTitle}
-          onChange={handleChangeTitle}
-        />
+        <span className="task-text">
+          <input
+            type="text"
+            className="edit-title-input"
+            value={editTitle}
+            onChange={handleChangeTitle}
+            onKeyDown={handleKeyDown}
+          />
+          <select
+            className="edit-owner-select"
+            value={editUserId}
+            disabled={unavailableUsers}
+            onChange={handleChangeOwner}
+            onKeyDown={handleKeyDown}
+          >
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          {editError !== "" && <p className="form-error">{editError}</p>}
+        </span>
 
         <span className="task-actions">
           <button
@@ -79,7 +113,6 @@ function TaskItem({
             Cancel
           </button>
         </span>
-        {editError !== "" && <p className="form-error">{editError}</p>}
       </li>
     );
   }
