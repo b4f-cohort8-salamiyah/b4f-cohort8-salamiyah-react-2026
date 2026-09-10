@@ -1,67 +1,108 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import type { Task, User } from "../types";
+import Badge from "./Badge";
 
 interface TaskItemProps {
-  id: number;
-  title: string;
+  task: Task;
   ownerName: string;
-  statusText: string;
-  statusClass: string;
+  users: User[];
+  usersUnavailable: boolean;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
-  onSaveEdit: (id: number, title: string) => void;
+  onSaveEdit: (id: number, title: string, userId: number) => void;
 }
 
-function TaskItem(props: TaskItemProps) {
-  const [editTitle, setEditTitle] = useState(props.title);
-  const [isEditing, setIsEditing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const MAX_TITLE_LENGTH = 200;
 
-  const MAX_TITLE_LENGTH = 200;
+function TaskItem({
+  task,
+  ownerName,
+  users,
+  usersUnavailable,
+  onToggle,
+  onDelete,
+  onSaveEdit,
+}: TaskItemProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
+  const [editUserId, setEditUserId] = useState(task.userId);
+  const [editError, setEditError] = useState("");
 
   function handleEditClick() {
+    setEditTitle(task.title);
+    setEditError("");
     setIsEditing(true);
-    setEditTitle(props.title);
-    setErrorMessage("");
   }
 
   function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
     setEditTitle(event.target.value);
   }
 
+  function handleChangeOwner(event: ChangeEvent<HTMLSelectElement>) {
+    setEditUserId(Number(event.target.value));
+  }
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      handleSaveClick();
+    } else if (event.key === "Escape") {
+      handleCancelClick();
+    }
+  }
+
   function handleCancelClick() {
     setIsEditing(false);
-    setErrorMessage("");
+    setEditError("");
   }
 
   function handleSaveClick() {
     const newTitle = editTitle.trim();
 
-    if (!newTitle) {
-      setErrorMessage("Title can't be empty.");
-      return;
-    }
-    if (newTitle.length > MAX_TITLE_LENGTH) {
-      setErrorMessage(
-        `Title can't be longer than ${MAX_TITLE_LENGTH} characters.`,
-      );
+    if (newTitle === "") {
+      setEditError("Title can't be empty.");
       return;
     }
 
-    props.onSaveEdit(props.id, newTitle);
+    if (newTitle.length > MAX_TITLE_LENGTH) {
+      setEditError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    onSaveEdit(task.id, newTitle, editUserId);
+
+    setEditError("");
     setIsEditing(false);
-    setErrorMessage("");
   }
 
   if (isEditing) {
     return (
       <li className="task-item">
-        <input
-          type="text"
-          className="edit-title-input"
-          value={editTitle}
-          onChange={handleChangeTitle}
-        />
-        {errorMessage ? <div className="form-error">{errorMessage}</div> : ""}
+        <span className="task-text">
+          <input
+            type="text"
+            className="edit-title-input"
+            value={editTitle}
+            onChange={handleChangeTitle}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+          <select
+            className="edit-owner-select"
+            value={editUserId}
+            onChange={handleChangeOwner}
+            disabled={usersUnavailable}
+            onKeyDown={handleKeyDown}
+          >
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          {editError !== "" && <p className="form-error">{editError}</p>}
+        </span>
+
         <span className="task-actions">
           <button
             className="task-action-button save-button"
@@ -80,27 +121,23 @@ function TaskItem(props: TaskItemProps) {
   return (
     <li className="task-item">
       <span className="task-text">
-        <span className="task-title">{props.title}</span>
-        <span className="task-user">{props.ownerName}</span>
+        <span className="task-title">{task.title}</span>
+        <span className="task-user">{ownerName}</span>
       </span>
-      <span className={`task-status ${props.statusClass}`}>
-        {props.statusText}
-      </span>
+      <Badge status={task.completed ? "completed" : "pending"} />
       <span className="task-actions">
         <button
           className="task-action-button"
-          onClick={() => props.onToggle(props.id)}
+          onClick={() => onToggle(task.id)}
         >
-          {props.statusClass === "completed"
-            ? "Mark Pending"
-            : "Mark Completed"}
+          {task.completed ? "Mark Pending" : "Mark Completed"}
         </button>
         <button className="task-action-button" onClick={handleEditClick}>
           Edit
         </button>
         <button
           className="task-action-button delete-button"
-          onClick={() => props.onDelete(props.id)}
+          onClick={() => onDelete(task.id)}
         >
           Delete
         </button>

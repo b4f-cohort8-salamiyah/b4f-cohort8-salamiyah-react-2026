@@ -1,22 +1,19 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-}
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import type { User } from "../types";
 
 interface AddTaskProps {
-  defaultUserId: number;
+  selectedUserId: number;
   users: User[];
   onAddTask: (title: string, userId: number) => void;
 }
 
-function AddTask(props: AddTaskProps) {
-  const [draftUserId, setDraftUserId] = useState(0);
-  const [draftTitle, setDraftTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+const MAX_TITLE_LENGTH = 200;
 
-  const MAX_TITLE_LENGTH = 200;
+function AddTask({ selectedUserId, users, onAddTask }: AddTaskProps) {
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftUserId, setDraftUserId] = useState(0);
+  const [formError, setFormError] = useState("");
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
     setDraftTitle(event.target.value);
@@ -30,22 +27,22 @@ function AddTask(props: AddTaskProps) {
     event.preventDefault();
 
     const trimmedTitle = draftTitle.trim();
-    if (!trimmedTitle) {
-      setErrorMessage("Title can't be empty.");
-      return;
-    }
-    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
-      setErrorMessage(
-        `Title can't be longer than ${MAX_TITLE_LENGTH} characters.`,
-      );
+
+    if (trimmedTitle === "") {
+      setFormError("Title can't be empty.");
       return;
     }
 
-    props.onAddTask(trimmedTitle, draftUserId);
+    if (trimmedTitle.length > MAX_TITLE_LENGTH) {
+      setFormError(`Title must be ${MAX_TITLE_LENGTH} characters or fewer.`);
+      return;
+    }
+
+    onAddTask(trimmedTitle, draftUserId);
 
     setDraftTitle("");
-    setDraftUserId(props.defaultUserId);
-    setErrorMessage("");
+    setDraftUserId(selectedUserId);
+    setFormError("");
   }
 
   return (
@@ -63,16 +60,18 @@ function AddTask(props: AddTaskProps) {
         value={draftUserId}
         onChange={handleUserChange}
       >
-        <option value={props.defaultUserId}>Select user</option>
-        {props.users.map((user) => {
-          return <option value={user.id}>{user.name}</option>;
-        })}
+        <option value={selectedUserId}>Select user</option>
+        {users.map((user) => (
+          <option key={user.id} value={user.id}>
+            {user.name}
+          </option>
+        ))}
       </select>
 
-      <button className="add-task-button" type="submit">
+      <button type="submit" className="add-task-button">
         Add Task
       </button>
-      {errorMessage ? <div className="form-error">{errorMessage}</div> : ""}
+      {formError !== "" && <p className="form-error">{formError}</p>}
     </form>
   );
 }
