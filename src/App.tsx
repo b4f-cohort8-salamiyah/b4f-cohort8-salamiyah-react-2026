@@ -65,6 +65,21 @@ function App() {
     return "Unknown person";
   }
 
+
+  function resetSelectedPersonIfNowEmpty(updatedTasks: Task[]) {
+    if (selectedUserId === 0) {
+      return;
+    }
+
+    const matchingTask = updatedTasks.find(
+      (task) => task.userId === selectedUserId,
+    );
+
+    if (!matchingTask) {
+      setSelectedUserId(0);
+    }
+  }
+
   function handleFilterChange(filter: FilterStatus) {
     setCurrentFilter(filter);
   }
@@ -151,18 +166,12 @@ function App() {
     if (!confirmed) {
       return;
     }
-    
+
+
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
-    if (selectedUserId !== 0) {
-      const stillHasTask = updatedTasks.find(
-        (task) => task.userId === selectedUserId,
-      );
+    resetSelectedPersonIfNowEmpty(updatedTasks);
 
-      if (!stillHasTask) {
-        setSelectedUserId(0);
-      }
-    }
   }
 
   function handleSaveEdit(
@@ -179,15 +188,9 @@ function App() {
     });
 
     setTasks(updatedTasks);
-    if (selectedUserId !== 0) {
-      const stillHasTask = updatedTasks.find(
-        (task) => task.userId === selectedUserId,
-      );
 
-      if (!stillHasTask) {
-        setSelectedUserId(0);
-      }
-    }
+
+    resetSelectedPersonIfNowEmpty(updatedTasks);
   }
 
   function handleReset() {
