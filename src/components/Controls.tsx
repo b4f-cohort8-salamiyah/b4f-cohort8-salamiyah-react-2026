@@ -9,6 +9,7 @@ interface ControlsProps {
   onSearchChange: (value: string) => void;
   visibleCount: number;
   totalCount: number;
+  onReset: () => void;
 }
 
 function Controls({
@@ -18,6 +19,7 @@ function Controls({
   onSearchChange,
   visibleCount,
   totalCount,
+  onReset,
 }: ControlsProps) {
   return (
     <>
@@ -26,6 +28,9 @@ function Controls({
       <p className="visible-count">
         {visibleCount} of {totalCount} tasks shown
       </p>
+      <button className="reset-button" onClick={onReset}>
+        Reset
+      </button>
     </>
   );
 }
