@@ -11,6 +11,8 @@ import TaskList from "./components/TaskList";
 import EmptyState from "./components/EmptyState";
 import ProgressText from "./components/ProgressText";
 
+const TASKS_STORAGE_KEY = "taskflow-tasks";
+
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -28,7 +30,7 @@ function App() {
 
     try {
       const data = await fetchTasks();
-      setTasks(data);
+      saveTasks(data);
       setIsLoadingTasks(false);
     } catch {
       setHasTaskError(true);
@@ -48,7 +50,15 @@ function App() {
   }
 
   useEffect(() => {
-    loadTasksData();
+    const storedTasks = loadStoredTasks();
+
+    if (storedTasks) {
+      setTasks(storedTasks);
+      setIsLoadingTasks(false);
+    } else {
+      loadTasksData();
+    }
+
     loadUsersData();
   }, []);
 
@@ -129,7 +139,7 @@ function App() {
       completed: false,
     };
 
-    setTasks([...tasks, newTask]);
+    saveTasks([...tasks, newTask]);
   }
 
   function handleToggle(id: number): void {
@@ -141,7 +151,7 @@ function App() {
       return task;
     });
 
-    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
   }
 
   function handleDelete(id: number): void {
@@ -151,7 +161,8 @@ function App() {
     }
 
     const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+    resetSelectedPersonIfNowEmpty(updatedTasks);
   }
 
   function handleSaveEdit(
@@ -167,13 +178,55 @@ function App() {
       return task;
     });
 
-    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+    resetSelectedPersonIfNowEmpty(updatedTasks);
   }
 
   function handleReset() {
     setCurrentFilter("all");
     setSearchText("");
     setSelectedUserId(0);
+  }
+
+  function resetSelectedPersonIfNowEmpty(updatedTasks: Task[]) {
+    if (selectedUserId === 0) {
+      return;
+    }
+
+    const matchingTask = updatedTasks.find(
+      (task) => task.userId === selectedUserId,
+    );
+    if (!matchingTask) {
+      setSelectedUserId(0);
+    }
+  }
+
+  function loadStoredTasks(): Task[] | null {
+    const savedValue = localStorage.getItem(TASKS_STORAGE_KEY);
+
+    if (savedValue === null) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(savedValue);
+
+      if (Array.isArray(parsed)) {
+        return parsed as Task[];
+      }
+
+      localStorage.removeItem(TASKS_STORAGE_KEY);
+      return null;
+    } catch (error) {
+      console.log(error);
+      localStorage.removeItem(TASKS_STORAGE_KEY);
+      return null;
+    }
+  }
+
+  function saveTasks(updatedTasks: Task[]) {
+    setTasks(updatedTasks);
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(updatedTasks));
   }
 
   return (
